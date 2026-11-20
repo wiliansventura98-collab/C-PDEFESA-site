@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pós-Defesa · Concursos e pós-doc</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,400..800;1,100,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f6f7f4; --surface:#ffffff; --surface2:#f3f5f2;
+  --ink:#1d2b3a; --ink2:#4b5a68; --ink3:#8793a0;
+  --line:#dfe3df; --line2:#c9cfca;
+  --accent:#2c6aad; --accent-soft:#e8f0f8; --contour:#b9874f;
+  --alta:#3d7c52; --media:#c7911e; --baixa:#c23b2a;
+  --danger:#c23b2a; --warn:#c7791e; --ok:#3d7c52; --star:#d99a0b;
+  --sans:'Archivo',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:15.5px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--accent)}
+.app{display:grid;grid-template-columns:232px minmax(0,1fr);min-height:100vh}
+.side{position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:2px;padding:22px 14px;border-right:1px solid var(--line);
+  background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='232' height='340' viewBox='0 0 232 340' fill='none' stroke='%23b9874f' stroke-opacity='.32' stroke-width='1'%3E%3Cpath d='M-10 330c30-40 60-20 90-60s40-90 90-100 70 10 80 40'/%3E%3Cpath d='M-10 345c35-30 70-10 100-50s45-80 85-88 62 14 70 42'/%3E%3Cpath d='M20 350c25-25 55-10 80-40s40-70 72-76 50 12 58 36'/%3E%3Cpath d='M55 355c20-18 40-8 58-30s30-50 54-54 36 10 42 28'/%3E%3Cpath d='M95 358c14-12 26-6 38-20s20-32 36-34 24 8 28 20'/%3E%3C/svg%3E") no-repeat left bottom}
+.brand{display:flex;align-items:center;gap:11px;padding:4px 10px 14px;border-bottom:1px solid var(--line);margin-bottom:10px}
+.brand svg{width:30px;height:30px;flex:none}
+.brand b{display:block;font-weight:700;font-size:17px;line-height:1.1;font-variation-settings:"wdth" 88}
+.brand small{font-size:12.5px;color:var(--ink3)}
+.tab{display:flex;align-items:center;gap:11px;width:100%;border:0;background:transparent;text-align:left;cursor:pointer;padding:9px 12px 9px 14px;border-left:3px solid transparent;font-weight:500;font-size:14.5px;color:var(--ink2)}
+.tab:hover{color:var(--ink)}
+.tab.on{color:var(--accent);border-left-color:var(--accent);font-weight:700}
+.tab .n{margin-left:auto;font-size:12px;color:var(--ink3);font-weight:600}
+.i{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.side-foot{margin-top:auto;display:flex;flex-direction:column;gap:2px}
+.side-foot .btn{border:0;background:transparent;padding:7px 10px;font-weight:500;font-size:13.5px;justify-content:flex-start}
+.side-foot .btn:hover{text-decoration:underline}
+.sync{font-size:12px;color:var(--ink3);padding:6px 10px}
+.wrap{padding:34px 40px 90px;max-width:1220px}
+header.top{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;border-bottom:2px solid var(--ink);padding-bottom:14px;margin-bottom:24px}
+.hello{font-size:13.5px;color:var(--ink3)}
+h1{font-weight:800;font-size:38px;line-height:1;font-variation-settings:"wdth" 82;margin:2px 0 6px}
+.sub{color:var(--ink2);font-size:14px}
+.btn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line2);background:#fff;padding:8px 14px;border-radius:5px;cursor:pointer;font-weight:600;font-size:14px;text-decoration:none;color:var(--ink)}
+.btn:hover{border-color:var(--ink3)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary:hover{background:#245b95}
+.btn.sm{padding:5px 10px;font-size:13px}
+.btn.ghost{border-color:transparent;background:transparent}
+.btn.danger{color:var(--danger)}
+.card{background:#fff;border:1px solid var(--line);border-radius:6px}
+.banner{background:#fff;border:1px dashed var(--line2);border-radius:5px;padding:10px 14px;color:var(--ink2);font-size:13px;margin-bottom:18px}
+.lbl{margin:0;font-size:13.5px;font-weight:600;color:var(--ink2)}
+.muted{color:var(--ink3)}
+/* painel */
+.hero{display:grid;grid-template-columns:1.35fr 1fr;gap:20px;margin-bottom:20px}
+.next{padding:22px 24px;border-left:4px solid var(--u,var(--danger));display:flex;flex-direction:column;gap:16px}
+.next-main{display:flex;gap:20px;align-items:flex-start}
+.cd{display:flex;flex-direction:column;padding-right:20px;border-right:1px solid var(--line)}
+.cd b{font-weight:800;font-size:76px;line-height:.9;font-variation-settings:"wdth" 70;color:var(--u)}
+.cd span{font-size:14px;font-weight:600;margin-top:6px;color:var(--u)}
+.next .what{font-weight:700;font-size:22px;line-height:1.25;margin:0;cursor:pointer}
+.next .what:hover{color:var(--accent)}
+.next .who{margin-top:6px;font-size:14px;color:var(--ink2)}
+.scale-bar{position:relative;height:8px;border:1px solid var(--ink);background:repeating-linear-gradient(90deg,#fff 0 calc(100%/6),#e9ece9 calc(100%/6) calc(200%/6))}
+.scale-fill{position:absolute;left:0;top:0;bottom:0;background:var(--u)}
+.scale-l{display:flex;justify-content:space-between;font-size:12px;color:var(--ink3);margin-top:4px}
+.nx{display:flex;gap:12px;align-items:baseline;padding:7px 0;border-bottom:1px dotted var(--line2);cursor:pointer}
+.nx:last-child{border-bottom:0}
+.nx:hover .nx-t{color:var(--accent)}
+.nx-d{font-weight:700;font-size:15px;font-variation-settings:"wdth" 80;width:48px;flex:none;font-variant-numeric:tabular-nums}
+.nx-t{font-weight:600;font-size:14px}
+.nx-s{font-size:12.5px;color:var(--ink3)}
+.stats{padding:20px 22px}
+.stats dl{margin:12px 0 0;display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--ink)}
+.stats dl>div{padding:12px 14px 12px 0;border-bottom:1px solid var(--line)}
+.stats dl>div:nth-child(odd){border-right:1px solid var(--line)}
+.stats dl>div:nth-child(even){padding-left:14px}
+.stats dl>div.wide{grid-column:1/-1;border-right:0;border-bottom:0}
+.stats dt{font-size:13px;color:var(--ink2)}
+.stats dd{margin:2px 0 0;font-weight:800;font-size:30px;line-height:1.05;font-variation-settings:"wdth" 78;font-variant-numeric:tabular-nums}
+.stats small{display:block;font-size:12.5px;color:var(--ink3);margin-top:2px}
+.sec{padding:20px 22px;margin-bottom:20px}
+.sec-h{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.sec-h h3{font-weight:700;font-size:19px;font-variation-settings:"wdth" 88;margin:0}
+.sec-h p{margin:2px 0 0;font-size:13px;color:var(--ink3)}
+.arow{display:flex;gap:10px;align-items:flex-start;padding:10px 14px;margin-top:8px;border-left:3px solid var(--line2);background:var(--surface2);border-radius:4px;cursor:pointer}
+.arow.crit{background:#fbeeec;border-color:var(--danger)}
+.arow.warn{background:#fcf3e6;border-color:var(--warn)}
+.arow.ok{background:#edf5ef;border-color:var(--ok)}
+.arow .dot{width:9px;height:9px;border-radius:50%;margin-top:7px;flex:none;background:var(--ink3)}
+.arow.crit .dot{background:var(--danger)}.arow.warn .dot{background:var(--warn)}.arow.ok .dot{background:var(--ok)}
+.arow b{font-size:14.5px}.arow .d{font-size:13.5px;color:var(--ink2)}
+/* pós-doc pós-defesa */
+.pd-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.pd{border:1px solid var(--line);border-top:4px solid var(--cc);border-radius:5px;padding:14px 16px;cursor:pointer;background:#fff}
+.pd:hover{border-color:var(--line2);border-top-color:var(--cc)}
+.pd h4{margin:6px 0 2px;font-size:15.5px;line-height:1.3}
+.pd p{margin:0;font-size:13px;color:var(--ink2)}
+.elig{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;padding:2px 8px;border-radius:4px}
+.elig.y{background:#e5f1e8;color:#2c5e3c}.elig.n{background:#fbeeec;color:#9a2c20}.elig.q{background:#fcf3e6;color:#8a5a12}
+/* toolbar e fichas */
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:18px}
+.toolbar input[type=search]{flex:1;min-width:200px;padding:8px 12px;border:1px solid var(--line2);border-radius:5px;background:#fff}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1px solid var(--line2);background:#fff;padding:5px 11px;border-radius:5px;cursor:pointer;font-size:13px;font-weight:600;color:var(--ink2)}
+.chip.on{background:var(--ink);border-color:var(--ink);color:#fff}
+select.sel{padding:7px 10px;border:1px solid var(--line2);border-radius:5px;background:#fff;font-size:13.5px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:18px}
+.cc{background:#fff;border:1px solid var(--line);border-left:4px solid var(--cc);border-radius:6px;padding:16px 18px 14px;display:flex;flex-direction:column;gap:10px;cursor:pointer}
+.cc:hover{border-color:var(--line2);border-left-color:var(--cc)}
+.cc:hover h3{color:var(--accent)}
+.cc.past{opacity:.62}
+.cc-top{display:flex;gap:8px;align-items:flex-start;justify-content:space-between}
+.cc h3{font-weight:700;font-size:16.5px;line-height:1.25;margin:0;font-variation-settings:"wdth" 92}
+.cc .role{font-size:13.5px;color:var(--ink2);margin-top:3px}
+.pill{display:inline-block;border-radius:4px;font-size:12px;font-weight:700;padding:2px 8px;background:color-mix(in srgb,var(--sc) 12%,#fff);color:color-mix(in srgb,var(--sc) 80%,#000)}
+.kv{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:9px 0;margin:0}
+.kv>div{padding:0 10px}.kv>div:first-child{padding-left:0}
+.kv>div+div{border-left:1px solid var(--line)}
+.kv dt{font-size:12px;color:var(--ink3)}
+.kv dd{margin:1px 0 0;font-weight:700;font-size:15px;font-variation-settings:"wdth" 85;font-variant-numeric:tabular-nums}
+.kv dd small{display:block;font-weight:600;font-size:12px;color:var(--ink3)}
+.why{font-size:13.5px;color:var(--ink2);margin:0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.cc-foot{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:13px}
+.st{font-size:12.5px;font-weight:600;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--ink2);border:1px solid var(--line)}
+.star{border:0;background:transparent;cursor:pointer;font-size:20px;line-height:1;color:var(--line2);padding:0 2px}
+.star.on{color:var(--star)}
+.star:hover{color:var(--star)}
+.empty{padding:40px 20px;text-align:center;color:var(--ink3);border:1px dashed var(--line2);border-radius:6px;background:#fff}
+/* tabelas */
+.tbl-wrap{overflow-x:auto;background:#fff;border:1px solid var(--line);border-radius:6px}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th{text-align:left;font-size:12.5px;font-weight:600;color:var(--ink3);padding:10px 12px;border-bottom:1px solid var(--ink);white-space:nowrap;background:#fff}
+td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td.w{min-width:240px}
+.yes{color:var(--ok);font-weight:700}.no{color:var(--danger);font-weight:700}
+.tag{display:inline-block;font-size:12px;font-weight:600;padding:1px 7px;border-radius:4px;background:var(--surface2);border:1px solid var(--line)}
+/* mapa */
+.map-wrap{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:20px}
+.map svg{width:100%;height:auto;display:block}
+.map path.uf{stroke:#fff;stroke-width:.7;cursor:pointer}
+.map path.uf:hover{stroke:var(--ink);stroke-width:1.4}
+.map path.uf.sel{stroke:var(--ink);stroke-width:2}
+.map text{font:600 9px var(--sans);fill:var(--ink);pointer-events:none}
+.map circle.op{stroke:#fff;stroke-width:1.5;pointer-events:none}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--ink2);margin-top:10px;align-items:center}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:2px;vertical-align:-2px;margin-right:4px}
+.legend i.c{border-radius:50%}
+/* drawer e modal */
+.ovl{position:fixed;inset:0;background:rgba(29,43,58,.35);z-index:50;display:flex;justify-content:flex-end}
+.ovl.center{justify-content:center;align-items:flex-start;padding:6vh 16px;overflow:auto}
+.drawer{width:min(680px,100%);height:100%;overflow:auto;background:var(--paper);padding:26px 30px 60px;border-left:1px solid var(--line)}
+.dhead{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;border-bottom:2px solid var(--ink);padding-bottom:12px;margin-bottom:16px}
+.dhead h2{font-weight:800;font-size:26px;line-height:1.1;margin:6px 0 4px;font-variation-settings:"wdth" 85}
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:12px 18px;margin:0 0 16px}
+.facts div span{display:block;font-size:12.5px;color:var(--ink3);font-weight:600}
+.facts div b{font-weight:600;font-size:14px}
+.facts .full{grid-column:1/-1}
+.box{background:#fff;border:1px solid var(--line);border-radius:6px;padding:14px 16px;margin-bottom:14px}
+.box h4{margin:0 0 8px;font-size:15px;border-bottom:1px solid var(--ink);padding-bottom:6px}
+.box p{margin:0;font-size:14px}
+.modal{background:#fff;border-radius:8px;width:min(720px,100%);border:1px solid var(--line)}
+.mhead{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--line)}
+.mhead h3{margin:0;font-size:18px}
+.mbody{padding:16px 20px}
+.mfoot{display:flex;justify-content:flex-end;gap:8px;padding:14px 20px;border-top:1px solid var(--line)}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px}
+.form label{display:block;font-size:12.5px;font-weight:600;color:var(--ink2);margin-bottom:3px}
+.form input,.form select,.form textarea,.mbody input,.mbody textarea{width:100%;padding:8px 10px;border:1px solid var(--line2);border-radius:5px;background:#fff}
+.form textarea{min-height:70px;resize:vertical}
+.form .full{grid-column:1/-1}
+.form .chk{display:flex;gap:8px;align-items:center;font-size:13.5px}
+.form .chk input{width:auto}
+.hint{font-size:13px;color:var(--ink2)}
+.err{color:var(--danger);font-size:13px;margin-top:8px;min-height:18px}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:9px 16px;border-radius:6px;font-size:14px;z-index:90}
+.gate ol{margin:8px 0 0;padding-left:20px;font-size:13.5px;line-height:1.6}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row2 label{display:block;font-size:12.5px;font-weight:600;margin:10px 0 3px}
+textarea.notes{width:100%;min-height:110px;padding:10px;border:1px solid var(--line2);border-radius:5px;resize:vertical;background:#fff}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (max-width:920px){
+  .app{grid-template-columns:1fr}
+  .side{position:static;height:auto;flex-direction:row;flex-wrap:wrap;background-image:none;padding:10px 12px;border-right:0;border-bottom:1px solid var(--line)}
+  .brand{border:0;margin:0;padding:0 8px 0 0;width:100%}
+  .tab{width:auto;border-left:0;border-bottom:3px solid transparent;padding:8px}
+  .tab.on{border-bottom-color:var(--accent)}
+  .tab .n{display:none}
+  .side-foot{flex-direction:row;margin:0}
+  .wrap{padding:22px 16px 80px}
+  h1{font-size:30px}
+  .hero,.map-wrap{grid-template-columns:1fr}
+  .cd b{font-size:56px}
+  .grid{grid-template-columns:1fr}
+  .form,.facts{grid-template-columns:1fr}
+  .drawer{padding:20px 16px 60px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side" id="side"></aside>
+  <main class="wrap" id="main"><p class="muted">Carregando…</p></main>
+</div>
+<script>
+// ---------- utilitários ----------
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const clone=o=>JSON.parse(JSON.stringify(o));
+const MES=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+function today(){ const d=new Date(); d.setHours(0,0,0,0); return d }
+function pd(s){ if(!s) return null; const [y,m,d]=s.split('-').map(Number); return new Date(y,m-1,d) }
+function days(s){ const d=pd(s); return d?Math.round((d-today())/864e5):null }
+function fd(s,ano){ const d=pd(s); if(!d) return '—'; return d.getDate()+' '+MES[d.getMonth()]+(ano!==false&&d.getFullYear()!==today().getFullYear()?' '+d.getFullYear():'') }
+function fdl(s){ const d=pd(s); return d?d.toLocaleDateString('pt-BR'):'' }
+function toast(t){ const el=document.createElement('div'); el.className='toast'; el.textContent=t; document.body.appendChild(el); setTimeout(()=>el.remove(),2400) }
+const ic={
+ painel:'<path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z"/>',
+ conc:'<path d="M3 21h18M5 21V10M19 21V10M9 21v-6h6v6M2 10l10-6 10 6"/>',
+ pd:'<path d="M12 3 2 8l10 5 10-5-10-5z"/><path d="M6 10.5V16c0 1.5 3 3 6 3s6-1.5 6-3v-5.5"/>',
+ fontes:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/>',
+ enc:'<path d="M4 4h16v4H4zM5 8v12h14V8M10 12h4"/>',
+ mapa:'<path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3z"/><path d="M9 3v15M15 6v15"/>',
+ dados:'<path d="M7 4v16M3 16l4 4 4-4M17 20V4M13 8l4-4 4 4"/>',
+ conta:'<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>',
+ perfil:'<path d="M8 2v4M16 2v4M3 9h18M5 5h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/>',
+ plus:'<path d="M12 5v14M5 12h14"/>',
+ link:'<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>'
+};
+const I=k=>`<svg class="i" viewBox="0 0 24 24">${ic[k]}</svg>`;
+const STATUS=['A avaliar','Interessado','Preparando inscrição','Inscrito','Aprovado','Não aprovado','Descartado'];
+const CH={Alta:'var(--alta)','Média':'var(--media)',Baixa:'var(--baixa)'};
+const TIPO={concurso:'Concurso docente',posdoc:'Pós-doutorado',bolsa:'Bolsa ou edital de pesquisa',outro:'Outro'};
+
+// ---------- estado ----------
+let DB=null, store=null, view='painel', openId=null;
+let F={q:'',chance:'',status:'',dest:false,mostrar:'abertos'};
+let mapSel=null, fontesTab='monitorar';
+try{ const v=localStorage.getItem('pd-view'); if(v) view=v }catch(e){}
+const ops=()=>DB?.oportunidades||[];
+
+// situação calculada a partir das datas
+function sit(o){
+  const da=days(o.abertura), dp=days(o.prazo);
+  if(dp!==null && dp<0) return {k:'enc',t:'Encerrado'};
+  if(da!==null && da>0) return {k:'abre',t:'Abre em '+fd(o.abertura,false)};
+  if(dp!==null) return {k:'aberto',t:'Aberto'};
+  return {k:'cont',t:o.situacao||'Sem prazo definido'};
+}
+// dá para pleitear depois da defesa?
+function elig(o){
+  const def=DB.perfil.defesa;
+  if(o.aceitaAntesDefesa) return {k:'y',t:'Aceita antes da defesa'};
+  if(!o.prazo) return {k:'y',t:'Sem prazo fixo'};
+  if(!def) return {k:'q',t:'Informe a data da defesa'};
+  return pd(o.prazo)>=pd(def)?{k:'y',t:'Prazo depois da defesa'}:{k:'n',t:'Prazo antes da defesa'};
+}
+function urg(n){ return n===null?'var(--ink3)':n<=7?'var(--danger)':n<=30?'var(--warn)':'var(--accent)' }
+
+// ---------- armazenamento ----------
+const LKEY='pd-base', GHKEY='pd-gh';
+const isPages=/github\.io$/.test(location.hostname);
+function setSt(t){ const el=$('#syncSt'); if(el) el.textContent=t }
+function localStore(){
+  let saved=null; try{ saved=JSON.parse(localStorage.getItem(LKEY)||'null') }catch(e){}
+  const persist=()=>{ try{ localStorage.setItem(LKEY,JSON.stringify(DB)) }catch(e){} };
+  if(saved){ DB=saved; setTimeout(render,0) }
+  else fetch('data/base.json',{cache:'no-store'}).then(r=>r.ok?r.json():Promise.reject()).then(j=>{ DB=j; persist(); render() })
+    .catch(()=>{ DB=emptyDB(); render() });
+  return {mode:'local',save(){ persist(); setSt('Salvo neste navegador') },reload(){ localStorage.removeItem(LKEY); location.reload() }};
+}
+function emptyDB(){ return {versao:1,perfil:{nome:'',area:'',defesa:''},criterios:{},oportunidades:[],monitorar:[],instituicoes:[],alertasSugeridos:[],encerrados:[]} }
+function ghCfg(){ try{ return JSON.parse(localStorage.getItem(GHKEY)||'null') }catch(e){ return null } }
+function b64enc(str){ const b=new TextEncoder().encode(str); let s=''; for(let i=0;i<b.length;i+=0x8000) s+=String.fromCharCode.apply(null,b.subarray(i,i+0x8000)); return btoa(s) }
+function b64dec(b64){ const bin=atob(String(b64).replace(/\s/g,'')); const u=new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) u[i]=bin.charCodeAt(i); return new TextDecoder().decode(u) }
+function ghReq(cfg,{method,body,raw}={}){
+  const url=`https://api.github.com/repos/${encodeURIComponent(cfg.owner)}/${encodeURIComponent(cfg.repo)}/contents/${cfg.path.split('/').map(encodeURIComponent).join('/')}`+(method?'':`?ref=${encodeURIComponent(cfg.branch||'main')}&_=${Date.now()}`);
+  const h={'Authorization':'Bearer '+cfg.token,'Accept':raw?'application/vnd.github.raw':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'};
+  if(body) h['Content-Type']='application/json';
+  return fetch(url,{method:method||'GET',headers:h,body,cache:'no-store'});
+}
+function ghStore(cfg){
+  let sha=null, timer=null, saving=false, dirty=false;
+  const cache=()=>{ try{ localStorage.setItem(LKEY+'-ghcache',JSON.stringify(DB)) }catch(e){} };
+  async function load(){ setSt('Carregando do GitHub…');
+    const r=await ghReq(cfg);
+    if(r.status===404){ DB=emptyDB(); sha=null }
+    else if(!r.ok) throw new Error(r.status===401?'chave inválida ou expirada':'HTTP '+r.status);
+    else { const j=await r.json(); sha=j.sha; let txt=j.content?b64dec(j.content):null;
+      if(txt===null){ const rr=await ghReq(cfg,{raw:true}); txt=await rr.text() }
+      DB=JSON.parse(txt) }
+    cache(); render(); setSt('Sincronizado ✓') }
+  const put=()=>ghReq(cfg,{method:'PUT',body:JSON.stringify({message:'Atualiza a base pelo painel',content:b64enc(JSON.stringify(DB,null,1)),...(sha?{sha}:{}),branch:cfg.branch||'main'})});
+  async function flush(){ if(saving){ schedule(); return } saving=true; dirty=false; setSt('Salvando…');
+    try{ let r=await put();
+      if(r.status===409||r.status===422){ const g=await ghReq(cfg); if(g.ok){ sha=(await g.json()).sha; r=await put() } }
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      sha=(await r.json()).content.sha; setSt(dirty?'Salvando…':'Salvo no GitHub ✓') }
+    catch(e){ dirty=true; setSt('Erro ao salvar; nova tentativa em 10 s'); setTimeout(()=>{ if(dirty) flush() },10000) }
+    finally{ saving=false } }
+  function schedule(){ dirty=true; cache(); setSt('Alterações pendentes…'); clearTimeout(timer); timer=setTimeout(flush,1500) }
+  try{ const c=JSON.parse(localStorage.getItem(LKEY+'-ghcache')||'null'); if(c&&c.oportunidades){ DB=c; setTimeout(render,0) } }catch(e){}
+  load().catch(e=>{ setSt('Sem conexão com o GitHub'); if(!DB) DB=emptyDB(); render(); setBanner('Não foi possível ler seus dados no GitHub ('+esc(e.message)+'). Confira a chave em <b>Conta</b>.') });
+  window.addEventListener('beforeunload',e=>{ if(dirty||saving){ e.preventDefault(); e.returnValue='' } });
+  return {mode:'github',cfg,save:schedule,reload:load};
+}
+let bannerHTML='';
+function setBanner(h){ bannerHTML=h; const el=$('#banner'); if(el) el.innerHTML=h?'<div class="banner">'+h+'</div>':'' }
+function commit(){ store.save(); render() }
+
+// ---------- barra lateral ----------
+function renderSide(){
+  const os=ops(), ab=o=>sit(o).k!=='enc';
+  const nC=os.filter(o=>o.tipo==='concurso'&&ab(o)).length, nP=os.filter(o=>o.tipo!=='concurso'&&ab(o)).length;
+  const nE=(DB?.encerrados||[]).length+os.filter(o=>!ab(o)).length;
+  const t=(k,l,n)=>`<button class="tab ${view===k?'on':''}" data-v="${k}">${I(k)}<span>${l}</span>${n!=null?`<span class="n">${n}</span>`:''}</button>`;
+  $('#side').innerHTML=`<div class="brand"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M16 4 4 27h24z"/><path d="M10 20c2-1.5 4-1.5 6 0s4 1.5 6 0M12.5 14.5c1.2-.9 2.4-.9 3.5 0s2.3.9 3.5 0"/></svg><div><b>Pós-Defesa</b><small>Concursos e pós-doc</small></div></div>
+   ${t('painel','Painel')}${t('conc','Concursos',nC)}${t('pd','Pós-doutorado',nP)}${t('fontes','Fontes e alertas')}${t('mapa','Mapa')}${t('enc','Encerrados',nE)}
+   <div class="side-foot"><div class="sync" id="syncSt">${store?.mode==='github'?'':'Dados neste navegador'}</div>
+   <button class="btn" id="bPerfil">${I('perfil')} Data da defesa</button>
+   <button class="btn" id="bDados">${I('dados')} Exportar e importar</button>
+   <button class="btn" id="bConta">${I('conta')} Conta</button></div>`;
+  $('#side').querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>{ view=b.dataset.v; try{localStorage.setItem('pd-view',view)}catch(e){} render(); window.scrollTo(0,0) });
+  $('#bPerfil').onclick=openPerfil; $('#bDados').onclick=openDados; $('#bConta').onclick=()=>openGate(false);
+}
+
+// ---------- telas ----------
+function header(title,sub,btn){
+  const d=new Date(), h=d.getHours(), s=h<12?'Bom dia':h<18?'Boa tarde':'Boa noite';
+  const nome=DB.perfil?.nome?', '+esc(DB.perfil.nome):'';
+  const dia=d.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'});
+  return `<header class="top"><div><div class="hello">${s}${nome}. ${dia.charAt(0).toUpperCase()+dia.slice(1)}.</div><h1>${title}</h1><div class="sub">${sub}</div></div>${btn===false?'':`<button class="btn primary" id="bAdd">${I('plus')} Adicionar oportunidade</button>`}</header><div id="banner">${bannerHTML?'<div class="banner">'+bannerHTML+'</div>':''}</div>`;
+}
+function render(){
+  renderSide();
+  if(!DB){ $('#main').innerHTML='<p class="muted">Carregando…</p>'; return }
+  const m=$('#main');
+  if(view==='painel') m.innerHTML=vPainel();
+  else if(view==='conc') m.innerHTML=vLista('concurso');
+  else if(view==='pd') m.innerHTML=vLista('posdoc');
+  else if(view==='fontes') m.innerHTML=vFontes();
+  else if(view==='mapa') m.innerHTML=vMapa();
+  else if(view==='enc') m.innerHTML=vEnc();
+  bind();
+}
+function bind(){
+  const a=$('#bAdd'); if(a) a.onclick=()=>openForm(null,view==='pd'?'posdoc':'concurso');
+  document.querySelectorAll('[data-open]').forEach(el=>el.onclick=e=>{ if(e.target.closest('.star,select,a,button:not([data-open])')) return; openDrawer(el.dataset.open) });
+  document.querySelectorAll('.star[data-id]').forEach(b=>b.onclick=e=>{ e.stopPropagation(); const o=ops().find(x=>x.id===b.dataset.id); o.destaque=!o.destaque; commit() });
+  document.querySelectorAll('select[data-st]').forEach(s=>{ s.onclick=e=>e.stopPropagation(); s.onchange=()=>{ const o=ops().find(x=>x.id===s.dataset.st); o.status=s.value; commit(); toast('Status: '+s.value) } });
+  const q=$('#fq'); if(q){ q.oninput=()=>{ F.q=q.value; const pos=q.selectionStart; render(); const n=$('#fq'); n.focus(); n.setSelectionRange(pos,pos) } }
+  document.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{ const [k,v]=b.dataset.f.split(':'); if(k==='dest') F.dest=!F.dest; else F[k]=F[k]===v&&k!=='mostrar'?'':v; render() });
+  const fs=$('#fst'); if(fs) fs.onchange=()=>{ F.status=fs.value; render() };
+  document.querySelectorAll('[data-ft]').forEach(b=>b.onclick=()=>{ fontesTab=b.dataset.ft; render() });
+  document.querySelectorAll('[data-uf]').forEach(p=>p.onclick=()=>{ mapSel=mapSel===p.dataset.uf?null:p.dataset.uf; render() });
+  const dl=$('#bDef'); if(dl) dl.onclick=openPerfil;
+  if(view==='mapa') loadGeo();
+}
+
+function vPainel(){
+  const os=ops(), abertas=os.filter(o=>sit(o).k!=='enc');
+  // eventos: aberturas e prazos futuros
+  const ev=[];
+  abertas.forEach(o=>{
+    if(o.abertura&&days(o.abertura)>0) ev.push({o,d:o.abertura,t:'Abertura das inscrições'});
+    if(o.prazo&&days(o.prazo)>=0) ev.push({o,d:o.prazo,t:'Fim das inscrições'});
+  });
+  if(DB.perfil.defesa&&days(DB.perfil.defesa)>=0) ev.push({o:null,d:DB.perfil.defesa,t:'Defesa da tese'});
+  ev.sort((a,b)=>pd(a.d)-pd(b.d));
+  groupEv(ev);
+  const nx=ev[0];
+  let hero='';
+  if(nx){
+    const n=days(nx.d), u=urg(n), span=30, pct=Math.max(4,Math.min(100,100-(n/span)*100));
+    const nome=nx.o?esc(nx.o.instituicao):'Sua defesa';
+    hero=`<div class="card next" style="--u:${u}"><p class="lbl">Próximo prazo</p>
+      <div class="next-main"><div class="cd"><b>${n}</b><span>${n===1?'dia':'dias'}</span></div>
+      <div><h2 class="what" ${nx.o?`data-open="${nx.o.id}"`:''}>${esc(nx.t)}</h2><div class="who">${nome}${nx.o?' · '+esc(short(nx.o.cargo)):''}${nx.extra?' <b>'+esc(nx.extra)+'</b>':''}</div><div class="who">${fdl(nx.d)}</div></div></div>
+      <div><div class="scale-bar"><div class="scale-fill" style="width:${pct}%"></div></div><div class="scale-l"><span>30 dias antes</span><span>${fd(nx.d)}</span></div></div>
+      ${ev.length>1?`<div><p class="lbl" style="margin-bottom:4px">Depois disso</p>${ev.slice(1,5).map(e=>{const k=days(e.d);return `<div class="nx" ${e.o?`data-open="${e.o.id}"`:''}><span class="nx-d" style="color:${urg(k)}">${k}d</span><div><div class="nx-t">${esc(e.t)}</div><div class="nx-s">${e.o?esc(e.o.instituicao)+' · '+esc(short(e.o.cargo,50))+(e.extra?esc(e.extra):''):'Defesa'} · ${fd(e.d)}</div></div></div>`}).join('')}</div>`:''}</div>`;
+  } else hero=`<div class="card next"><p class="lbl">Próximo prazo</p><p class="muted">Nenhum prazo futuro cadastrado.</p></div>`;
+  const nCa=abertas.filter(o=>o.tipo==='concurso').length, nPa=abertas.filter(o=>o.tipo!=='concurso').length;
+  const nAlta=abertas.filter(o=>o.chance==='Alta').length, nDest=abertas.filter(o=>o.destaque).length;
+  const def=DB.perfil.defesa, dd=days(def);
+  const stats=`<div class="card stats"><p class="lbl">Resumo</p><dl>
+    <div><dt>Concursos vigentes</dt><dd>${nCa}</dd></div><div><dt>Pós-doc vigentes</dt><dd>${nPa}</dd></div>
+    <div><dt>Chance alta</dt><dd style="color:var(--alta)">${nAlta}</dd></div><div><dt>Em destaque</dt><dd style="color:var(--star)">${nDest}</dd></div>
+    <div class="wide"><dt>Defesa da tese</dt>${def?`<dd>${dd>=0?dd+' dias':'Defendida'}</dd><small>${fdl(def)}</small>`:`<dd style="font-size:18px"><button class="btn sm" id="bDef">Informar a data</button></dd><small>As chances e a elegibilidade dos pós-docs dependem dela.</small>`}</div></dl></div>`;
+  // alertas
+  const al=[];
+  abertas.forEach(o=>{
+    const dp=days(o.prazo), da=days(o.abertura), e=o.tipo!=='concurso'?elig(o):null;
+    if(dp!==null&&dp>=0&&dp<=30&&!['Descartado','Inscrito'].includes(o.status)) al.push({d0:o.prazo,c:dp<=7?'crit':'warn',o,t:'Inscrições terminam em '+dp+(dp===1?' dia':' dias'),d:fdl(o.prazo)+(o.status==='A avaliar'?' · Você ainda não avaliou esta oportunidade.':'')});
+    if(da!==null&&da>0&&da<=14) al.push({d0:o.abertura,c:'ok',o,t:'Inscrições abrem em '+da+(da===1?' dia':' dias'),d:fdl(o.abertura)+(o.proximoPasso?' · '+o.proximoPasso:'')});
+    if(e&&e.k==='n'&&o.chance!=='Baixa') al.push({c:'warn',o,t:'Prazo antes da sua defesa',d:'Confira se o edital aceita tese depositada.'});
+  });
+  os.filter(o=>sit(o).k==='enc'&&!['Inscrito','Aprovado','Não aprovado','Descartado'].includes(o.status)).forEach(o=>al.push({c:'info',o,t:'Prazo encerrado',d:'Encerrou em '+fdl(o.prazo)+'. Mova para Encerrados ou atualize o status.'}));
+  { const seen={}; for(let i=0;i<al.length;i++){ const a=al[i]; if(!a.o||!a.o.link||!a.d0) continue; const k=a.t+'|'+a.d0+'|'+a.o.link; if(seen[k]){ seen[k].n=(seen[k].n||1)+1; al.splice(i--,1) } else seen[k]=a }
+    al.forEach(a=>{ if(a.n>1) a.d=fdl(a.d0)+' · '+a.n+' subáreas do mesmo edital: '+ops().filter(x=>x.link===a.o.link&&(x.prazo===a.d0||x.abertura===a.d0)).map(x=>x.chance).join(', ')+' (chance).' }) }
+  if(!def) al.unshift({c:'warn',o:null,t:'Data da defesa não informada',d:'Informe a data para saber quais pós-docs você pode pleitear.'});
+  const alertas=`<div class="card sec"><div class="sec-h"><div><h3>Alertas</h3><p>${al.length} ${al.length===1?'aviso':'avisos'} · calculados a partir das datas de cada edital</p></div></div>
+    ${al.length?al.map(a=>`<div class="arow ${a.c}" ${a.o?`data-open="${a.o.id}"`:'id="bDef2"'}><span class="dot"></span><div><b>${esc(a.t)}</b>${a.o?` <span class="muted">· ${esc(a.o.instituicao)}</span>`:''}<div class="d">${esc(a.d)}</div></div></div>`).join(''):'<p class="muted">Nada urgente.</p>'}</div>`;
+  // pós-doc pós-defesa
+  const pds=abertas.filter(o=>o.tipo!=='concurso').sort((a,b)=>rankCh(a)-rankCh(b)||(b.destaque-a.destaque));
+  const pdsec=`<div class="card sec"><div class="sec-h"><div><h3>Pós-doutorados para depois da defesa</h3><p>Vigentes ou em fluxo contínuo, com a situação em relação à data da sua defesa</p></div><button class="btn sm" data-go="pd">Ver todos</button></div>
+    <div class="pd-grid">${pds.map(o=>{const e=elig(o),s=sit(o);return `<div class="pd" style="--cc:${CH[o.chance]||'var(--line2)'}" data-open="${o.id}">
+      <div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><span class="pill" style="--sc:${CH[o.chance]}">Chance ${esc((o.chance||'').toLowerCase())}</span>${o.destaque?'<span style="color:var(--star)">★</span>':''}</div>
+      <h4>${esc(o.instituicao)}</h4><p>${esc(short(o.cargo,90))}</p>
+      <p style="margin-top:8px"><span class="elig ${e.k}">${esc(e.t)}</span></p>
+      <p style="margin-top:6px">${o.prazo?'Prazo '+fdl(o.prazo)+(days(o.prazo)>=0?' · '+days(o.prazo)+' dias':''):esc(s.t)}</p></div>`}).join('')||'<p class="muted">Nenhum pós-doc vigente.</p>'}</div></div>`;
+  // destaques
+  const dest=os.filter(o=>o.destaque&&sit(o).k!=='enc');
+  const dsec=dest.length?`<div class="sec-h" style="margin-top:6px"><div><h3>Em destaque ★</h3><p>Oportunidades que você marcou com estrela</p></div></div><div class="grid">${dest.map(card).join('')}</div>`:'';
+  setTimeout(()=>{ document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{ view=b.dataset.go; render() }); const b2=$('#bDef2'); if(b2) b2.onclick=openPerfil },0);
+  return header('Painel',`${abertas.length} oportunidades vigentes em acompanhamento`)+`<div class="hero">${hero}${stats}</div>${alertas}${pdsec}${dsec}`;
+}
+// junta subáreas do mesmo edital (mesmo link, mesma data e mesmo aviso)
+function groupEv(arr){ const seen={}; for(let i=arr.length-1;i>=0;i--){ const e=arr[i]; if(!e.o||!e.o.link) continue; const k=e.t+'|'+(e.d||'')+'|'+e.o.link; if(seen[k]){ seen[k].n=(seen[k].n||1)+1; arr.splice(i,1) } else seen[k]=e }
+  arr.forEach(e=>{ if(e.n>1&&e.o) e.extra=' e mais '+(e.n-1)+(e.n===2?' subárea':' subáreas')+' do mesmo edital' }); return arr }
+const rankCh=o=>({Alta:0,'Média':1,Baixa:2}[o.chance]??3);
+function short(s,n=70){ s=String(s||''); return s.length>n?s.slice(0,n-1).trimEnd()+'…':s }
+
+function card(o){
+  const s=sit(o), dp=days(o.prazo), da=days(o.abertura), c=CH[o.chance]||'var(--line2)';
+  const prazoCell=o.prazo?`<dd style="color:${dp<0?'var(--ink3)':urg(dp)}">${fd(o.prazo)}<small>${dp<0?'encerrado':dp+' dias'}</small></dd>`:`<dd>—<small>${esc(o.situacao||'sem prazo')}</small></dd>`;
+  const e=o.tipo!=='concurso'?elig(o):null;
+  return `<article class="cc ${s.k==='enc'?'past':''}" style="--cc:${c}" data-open="${o.id}">
+   <div class="cc-top"><div><span class="pill" style="--sc:${c}">Chance ${esc((o.chance||'?').toLowerCase())}</span> <span class="tag">${esc(s.t)}</span>${e?` <span class="elig ${e.k}">${esc(e.t)}</span>`:''}</div><button class="star ${o.destaque?'on':''}" data-id="${o.id}" title="Destaque">${o.destaque?'★':'☆'}</button></div>
+   <div><h3>${esc(o.instituicao)}</h3><div class="role">${esc(o.cargo)}</div></div>
+   <dl class="kv"><div><dt>Abertura</dt><dd>${fd(o.abertura)}${da!==null&&da>0?`<small>em ${da} dias</small>`:'<small>&nbsp;</small>'}</dd></div><div><dt>Prazo</dt>${prazoCell}</div><div><dt>${o.tipo==='concurso'?'Salário':'Bolsa'}</dt><dd style="font-size:13.5px">${esc(short(o.remuneracao||'—',28))}</dd></div></dl>
+   ${o.porque?`<p class="why">${esc(o.porque)}</p>`:''}
+   <div class="cc-foot"><select class="sel" data-st="${o.id}">${STATUS.map(x=>`<option ${x===(o.status||'A avaliar')?'selected':''}>${x}</option>`).join('')}</select>${o.notas?'<span class="muted">· tem notas</span>':''}${o.link?`<a href="${esc(o.link)}" target="_blank" rel="noopener" style="margin-left:auto;font-size:13px">Edital ↗</a>`:''}</div></article>`;
+}
+function vLista(tipo){
+  const isC=tipo==='concurso';
+  let l=ops().filter(o=>isC?o.tipo==='concurso':o.tipo!=='concurso');
+  const tot=l.length;
+  if(F.mostrar==='abertos') l=l.filter(o=>sit(o).k!=='enc');
+  if(F.chance) l=l.filter(o=>o.chance===F.chance);
+  if(F.status) l=l.filter(o=>(o.status||'A avaliar')===F.status);
+  if(F.dest) l=l.filter(o=>o.destaque);
+  if(F.q){ const q=F.q.toLowerCase(); l=l.filter(o=>JSON.stringify(o).toLowerCase().includes(q)) }
+  l.sort((a,b)=>(b.destaque-a.destaque)||rankCh(a)-rankCh(b)||((pd(a.prazo)||9e15)-(pd(b.prazo)||9e15)));
+  const chip=(k,v,lab)=>`<button class="chip ${F[k]===v?'on':''}" data-f="${k}:${v}">${lab}</button>`;
+  const tb=`<div class="toolbar"><input type="search" id="fq" placeholder="Buscar por instituição, área, cidade…" value="${esc(F.q)}">
+    <div class="chips">${chip('chance','Alta','Alta')}${chip('chance','Média','Média')}${chip('chance','Baixa','Baixa')}<button class="chip ${F.dest?'on':''}" data-f="dest:1">★ Destaques</button></div>
+    <select class="sel" id="fst"><option value="">Todos os status</option>${STATUS.map(x=>`<option ${F.status===x?'selected':''}>${x}</option>`).join('')}</select>
+    <div class="chips">${chip('mostrar','abertos','Vigentes')}${chip('mostrar','todos','Todos')}</div></div>`;
+  const leg=`<div class="legend" style="margin:-6px 0 16px"><span><i style="background:var(--alta)"></i>Alta: ${esc(short(DB.criterios?.Alta||'',90))}</span><span><i style="background:var(--media)"></i>Média</span><span><i style="background:var(--baixa)"></i>Baixa</span></div>`;
+  return header(isC?'Concursos docentes':'Pós-doutorado',`${l.length} de ${tot} ${isC?'concursos':'oportunidades'}${isC?'':' · a etiqueta verde indica o que você pode pleitear depois da defesa'}`)+tb+leg+(l.length?`<div class="grid">${l.map(card).join('')}</div>`:'<div class="empty">Nada encontrado com esses filtros.</div>');
+}
+function vFontes(){
+  const t=(k,l)=>`<button class="chip ${fontesTab===k?'on':''}" data-ft="${k}">${l}</button>`;
+  let body='';
+  if(fontesTab==='monitorar'){
+    body=`<div class="tbl-wrap"><table><thead><tr><th>Tipo</th><th>Fonte</th><th>O que acompanhar</th><th>Quando costuma abrir</th><th>Por que importa</th><th></th></tr></thead><tbody>${(DB.monitorar||[]).map(m=>`<tr><td><span class="tag">${esc(m.tipo)}</span></td><td><b>${esc(m.fonte)}</b></td><td class="w">${esc(m.oQue)}</td><td>${esc(m.quando)}</td><td class="w">${esc(m.porque)}</td><td>${m.link?`<a href="${esc(m.link)}" target="_blank" rel="noopener">Abrir ↗</a>`:''}</td></tr>`).join('')}</tbody></table></div>`;
+  } else if(fontesTab==='inst'){
+    const l=DB.instituicoes||[];
+    body=`<p class="hint" style="margin-top:0">${l.length} instituições com alerta configurado. Os alertas com "geografia" faltam em ${l.filter(x=>!x.alertaGeo).length}.</p><div class="tbl-wrap"><table><thead><tr><th>Sigla</th><th>Instituição</th><th>Rede</th><th>UF</th><th>Alerta "geografia"</th><th>Alerta geral</th><th>Observação</th></tr></thead><tbody>${l.map(x=>`<tr><td><b>${esc(x.sigla)}</b></td><td>${esc(x.nome)}</td><td>${esc(x.rede)}</td><td>${esc(x.uf)}</td><td class="${x.alertaGeo?'yes':'no'}">${x.alertaGeo?'Sim':'Não'}</td><td class="${x.alertaGeral?'yes':'no'}">${x.alertaGeral?'Sim':'Não'}</td><td>${esc(x.obs||'')}</td></tr>`).join('')}</tbody></table></div>`;
+  } else {
+    body=`<p class="hint" style="margin-top:0">Buscas que ainda não têm alerta e cobririam lacunas da lista atual. Copie a busca para criar o alerta.</p><div class="tbl-wrap"><table><thead><tr><th>Busca sugerida</th><th>Por quê</th><th></th></tr></thead><tbody>${(DB.alertasSugeridos||[]).map((x,i)=>`<tr><td><code>${esc(x.busca)}</code></td><td class="w">${esc(x.porque)}</td><td><button class="btn sm" data-copy="${i}">Copiar</button></td></tr>`).join('')}</tbody></table></div>`;
+    setTimeout(()=>document.querySelectorAll('[data-copy]').forEach(b=>b.onclick=()=>{ navigator.clipboard?.writeText(DB.alertasSugeridos[b.dataset.copy].busca).then(()=>toast('Busca copiada')) }),0);
+  }
+  return header('Fontes e alertas','Onde as oportunidades aparecem e o que vale monitorar',false)+`<div class="toolbar"><div class="chips">${t('monitorar','Monitorar (recorrentes)')}${t('inst','Instituições monitoradas')}${t('sug','Alertas sugeridos')}</div></div>`+body;
+}
+function vEnc(){
+  const auto=ops().filter(o=>sit(o).k==='enc');
+  const man=DB.encerrados||[];
+  return header('Encerrados','Editais com inscrições já fechadas, para referência do próximo ciclo',false)+
+   (auto.length?`<div class="sec-h"><div><h3>Da sua base</h3><p>O prazo passou. Use "Mover para encerrados" na ficha para arquivar.</p></div></div><div class="grid" style="margin-bottom:24px">${auto.map(card).join('')}</div>`:'')+
+   `<div class="tbl-wrap"><table><thead><tr><th>Tipo</th><th>Instituição</th><th>Área</th><th>Período de inscrição</th><th>Remuneração</th><th></th></tr></thead><tbody>${man.map(m=>`<tr><td><span class="tag">${esc(m.tipo)}</span></td><td><b>${esc(m.instituicao)}</b></td><td class="w">${esc(m.area)}</td><td>${esc(m.periodo)}</td><td>${esc(m.remuneracao)}</td><td>${m.link?`<a href="${esc(m.link)}" target="_blank" rel="noopener">Edital ↗</a>`:''}</td></tr>`).join('')}</tbody></table></div>`;
+}
+
+// ---------- mapa ----------
+let GEO=null;
+function loadGeo(){ if(GEO){ drawMap(); return } fetch('geo/states.json').then(r=>r.json()).then(g=>{ GEO=g; drawMap() }).catch(()=>{ const el=$('#mapBox'); if(el) el.innerHTML='<p class="muted">Não foi possível carregar a base cartográfica.</p>' }) }
+function vMapa(){
+  return header('Mapa','Instituições monitoradas e oportunidades vigentes por estado',false)+`<div class="map-wrap"><div class="card sec map" id="mapBox"><p class="muted">Carregando mapa…</p></div><div id="mapSide"></div></div>`;
+}
+function drawMap(){
+  const box=$('#mapBox'); if(!box||!GEO) return;
+  const inst=DB.instituicoes||[], os=ops().filter(o=>sit(o).k!=='enc');
+  const cnt={}; inst.forEach(x=>String(x.uf).split('/').forEach(u=>{ cnt[u]=(cnt[u]||0)+1 }));
+  const opc={}; os.forEach(o=>{ if(o.uf&&o.uf!=='EX') (opc[o.uf]=opc[o.uf]||[]).push(o) });
+  const max=Math.max(1,...Object.values(cnt));
+  const W=520,H=520, x0=-74.5,x1=-34.5,y0=6,y1=-34; const k=Math.min(W/(x1-x0),H/(y0-y1));
+  const P=([lon,lat])=>[(lon-x0)*k,(y0-lat)*k];
+  const ring=r=>'M'+r.map(p=>P(p).map(v=>v.toFixed(1)).join(',')).join('L')+'Z';
+  const shade=n=>{ if(!n) return '#eef0ec'; const t=n/max; return `color-mix(in srgb,#b9874f ${Math.round(18+t*62)}%,#fff)` };
+  let paths='',labels='',dots='';
+  GEO.features.forEach(f=>{ const uf=f.properties.uf; const g=f.geometry; const polys=g.type==='Polygon'?[g.coordinates]:g.coordinates;
+    paths+=`<path class="uf ${mapSel===uf?'sel':''}" data-uf="${uf}" fill="${shade(cnt[uf])}" d="${polys.map(p=>p.map(ring).join('')).join('')}"><title>${f.properties.n}: ${cnt[uf]||0} instituições</title></path>`;
+    const [lx,ly]=P([f.properties.lx,f.properties.ly]);
+    labels+=`<text x="${lx.toFixed(1)}" y="${(ly+3).toFixed(1)}" text-anchor="middle">${uf}</text>`;
+    (opc[uf]||[]).forEach((o,i)=>{ dots+=`<circle class="op" cx="${(lx+10+i*7).toFixed(1)}" cy="${(ly-8).toFixed(1)}" r="5" fill="${CH[o.chance]}"/>` });
+  });
+  box.innerHTML=`<svg viewBox="0 0 ${((x1-x0)*k).toFixed(0)} ${((y0-y1)*k).toFixed(0)}" role="img" aria-label="Mapa do Brasil por estado">${paths}${labels}${dots}</svg>
+   <div class="legend"><span><i style="background:#eef0ec;border:1px solid var(--line2)"></i>sem alerta</span><span><i style="background:color-mix(in srgb,#b9874f 30%,#fff)"></i>poucas</span><span><i style="background:color-mix(in srgb,#b9874f 80%,#fff)"></i>${max} instituições</span><span><i class="c" style="background:var(--alta)"></i><i class="c" style="background:var(--media)"></i><i class="c" style="background:var(--baixa)"></i>oportunidade vigente (cor = chance)</span></div>`;
+  box.querySelectorAll('[data-uf]').forEach(p=>p.onclick=()=>{ mapSel=mapSel===p.dataset.uf?null:p.dataset.uf; drawMap() });
+  const side=$('#mapSide');
+  const ex=os.filter(o=>o.uf==='EX');
+  if(mapSel){
+    const nome=GEO.features.find(f=>f.properties.uf===mapSel)?.properties.n||mapSel;
+    const ii=inst.filter(x=>String(x.uf).split('/').includes(mapSel)), oo=opc[mapSel]||[];
+    side.innerHTML=`<div class="card sec"><div class="sec-h"><div><h3>${esc(nome)}</h3><p>${oo.length} oportunidades vigentes · ${ii.length} instituições monitoradas</p></div><button class="btn sm" id="mClr">Limpar</button></div>
+     ${oo.map(o=>`<div class="nx" data-open="${o.id}"><span class="sw" style="width:10px;height:10px;border-radius:50%;background:${CH[o.chance]};flex:none;margin-top:5px"></span><div><div class="nx-t">${esc(o.instituicao)}</div><div class="nx-s">${esc(short(o.cargo,80))}</div></div></div>`).join('')}
+     ${ii.length?`<p class="lbl" style="margin-top:12px">Instituições monitoradas</p><p class="hint">${ii.map(x=>`<b>${esc(x.sigla)}</b>`).join(', ')}</p>`:''}</div>`;
+  } else {
+    side.innerHTML=`<div class="card sec"><div class="sec-h"><div><h3>Clique num estado</h3><p>Para ver as oportunidades e as instituições monitoradas.</p></div></div>
+     <p class="lbl">Fora do Brasil</p>${ex.map(o=>`<div class="nx" data-open="${o.id}"><span style="width:10px;height:10px;border-radius:50%;background:${CH[o.chance]};flex:none;margin-top:5px"></span><div><div class="nx-t">${esc(o.instituicao)}</div><div class="nx-s">${esc(o.pais||'')} · ${esc(short(o.cargo,70))}</div></div></div>`).join('')||'<p class="muted">Nenhuma.</p>'}</div>`;
+  }
+  const c=$('#mClr'); if(c) c.onclick=()=>{ mapSel=null; drawMap() };
+  side.querySelectorAll('[data-open]').forEach(el=>el.onclick=()=>openDrawer(el.dataset.open));
+}
+
+// ---------- ficha ----------
+function openDrawer(id){
+  const o=ops().find(x=>x.id===id); if(!o) return; openId=id;
+  const s=sit(o), e=o.tipo!=='concurso'?elig(o):null, c=CH[o.chance];
+  const f=(l,v,full)=>v?`<div class="${full?'full':''}"><span>${l}</span><b>${esc(v)}</b></div>`:'';
+  const layer=document.createElement('div'); layer.className='ovl';
+  layer.innerHTML=`<div class="drawer"><div class="dhead"><div><span class="pill" style="--sc:${c}">Chance ${esc((o.chance||'').toLowerCase())}</span> <span class="tag">${esc(TIPO[o.tipo]||o.tipo)}</span> <span class="tag">${esc(s.t)}</span>${e?` <span class="elig ${e.k}">${esc(e.t)}</span>`:''}<h2>${esc(o.instituicao)}</h2><div class="sub">${esc(o.cargo)}</div></div>
+   <div style="display:flex;gap:6px"><button class="star ${o.destaque?'on':''}" id="dStar" title="Destaque">${o.destaque?'★':'☆'}</button><button class="btn ghost sm" id="dX">✕</button></div></div>
+   <div class="facts">${f('Abertura',o.abertura?fdl(o.abertura):'')}${f('Prazo',o.prazo?fdl(o.prazo)+(days(o.prazo)>=0?' ('+days(o.prazo)+' dias)':''):(o.situacao||''))}
+    ${f(o.tipo==='concurso'?'Salário':'Bolsa',o.remuneracao)}${f('Vagas',o.vagas)}${f('Duração',o.duracao)}${f('Titulação exigida',o.titulacao,1)}${f('Elegibilidade',o.elegibilidade,1)}</div>
+   ${o.porque?`<div class="box"><h4>Por que essa chance</h4><p>${esc(o.porque)}</p></div>`:''}
+   ${o.proximoPasso?`<div class="box"><h4>Próximo passo</h4><p>${esc(o.proximoPasso)}</p></div>`:''}
+   <div class="box"><h4>Meu acompanhamento</h4><div class="row2"><div><label>Meu status</label><select class="sel" id="dSt" style="width:100%">${STATUS.map(x=>`<option ${x===(o.status||'A avaliar')?'selected':''}>${x}</option>`).join('')}</select></div><div><label>Chance</label><select class="sel" id="dCh" style="width:100%">${['Alta','Média','Baixa'].map(x=>`<option ${x===o.chance?'selected':''}>${x}</option>`).join('')}</select></div></div>
+    <label style="display:block;font-size:12.5px;font-weight:600;margin:10px 0 3px">Minhas notas</label><textarea class="notes" id="dNo" placeholder="Anotações, contatos, documentos a reunir…">${esc(o.notas||'')}</textarea></div>
+   <div style="display:flex;gap:8px;flex-wrap:wrap">${o.link?`<a class="btn primary" href="${esc(o.link)}" target="_blank" rel="noopener">${I('link')} Abrir edital</a>`:''}<button class="btn" id="dEd">Editar dados</button>${s.k==='enc'?'<button class="btn" id="dMv">Mover para encerrados</button>':''}<button class="btn danger" id="dDel">Excluir</button></div>
+   <p class="muted" style="font-size:12.5px;margin-top:16px">Confira sempre as datas e exigências no edital oficial.</p></div>`;
+  document.body.appendChild(layer);
+  const close=()=>{ layer.remove(); openId=null; render() };
+  layer.onclick=ev=>{ if(ev.target===layer) close() };
+  layer.querySelector('#dX').onclick=close;
+  layer.querySelector('#dStar').onclick=ev=>{ o.destaque=!o.destaque; ev.target.classList.toggle('on',o.destaque); ev.target.textContent=o.destaque?'★':'☆'; store.save() };
+  layer.querySelector('#dSt').onchange=ev=>{ o.status=ev.target.value; store.save(); toast('Status atualizado') };
+  layer.querySelector('#dCh').onchange=ev=>{ o.chance=ev.target.value; store.save() };
+  let nt; layer.querySelector('#dNo').oninput=ev=>{ clearTimeout(nt); nt=setTimeout(()=>{ o.notas=ev.target.value; store.save() },600) };
+  layer.querySelector('#dEd').onclick=()=>{ layer.remove(); openForm(o) };
+  const mv=layer.querySelector('#dMv'); if(mv) mv.onclick=()=>{ DB.encerrados=DB.encerrados||[]; DB.encerrados.unshift({tipo:o.tipo==='concurso'?'Concurso':'Pós-doc',instituicao:o.instituicao,area:o.cargo,periodo:(o.abertura?fdl(o.abertura)+' a ':'até ')+fdl(o.prazo),remuneracao:o.remuneracao||'',link:o.link||'',meuStatus:o.status,notas:o.notas||''}); DB.oportunidades=ops().filter(x=>x!==o); store.save(); close(); toast('Movido para Encerrados') };
+  layer.querySelector('#dDel').onclick=()=>{ if(!confirm('Excluir "'+o.instituicao+'"?')) return; DB.oportunidades=ops().filter(x=>x!==o); store.save(); close() };
+  document.addEventListener('keydown',function k(ev){ if(ev.key==='Escape'&&document.body.contains(layer)){ close(); document.removeEventListener('keydown',k) } });
+}
+function openForm(o,tipo){
+  const novo=!o; o=o?clone(o):{id:'',tipo:tipo||'concurso',chance:'Média',status:'A avaliar',destaque:false};
+  const fld=(k,l,t='text',full)=>`<div class="${full?'full':''}"><label>${l}</label>${t==='area'?`<textarea data-k="${k}">${esc(o[k]||'')}</textarea>`:`<input type="${t}" data-k="${k}" value="${esc(o[k]||'')}">`}</div>`;
+  const layer=document.createElement('div'); layer.className='ovl center';
+  layer.innerHTML=`<div class="modal"><div class="mhead"><h3>${novo?'Nova oportunidade':'Editar oportunidade'}</h3><button class="btn ghost sm" data-c>✕</button></div><div class="mbody"><div class="form">
+   <div><label>Tipo</label><select data-k="tipo">${Object.entries(TIPO).map(([k,v])=>`<option value="${k}" ${o.tipo===k?'selected':''}>${v}</option>`).join('')}</select></div>
+   <div><label>Chance</label><select data-k="chance">${['Alta','Média','Baixa'].map(x=>`<option ${o.chance===x?'selected':''}>${x}</option>`).join('')}</select></div>
+   ${fld('instituicao','Instituição *','text',1)}${fld('cargo','Cargo, área ou modalidade','text',1)}
+   ${fld('abertura','Abertura das inscrições','date')}${fld('prazo','Prazo das inscrições','date')}
+   ${fld('remuneracao','Salário ou bolsa')}${fld('uf','UF (ou EX para exterior)')}
+   ${fld('vagas','Vagas')}${fld('duracao','Duração (pós-doc)')}
+   ${fld('titulacao','Titulação exigida','text',1)}${fld('elegibilidade','Elegibilidade','area',1)}
+   ${fld('situacao','Situação quando não há prazo (ex.: Fluxo contínuo)','text',1)}
+   ${fld('porque','Por que essa chance','area',1)}${fld('proximoPasso','Próximo passo','area',1)}${fld('link','Link do edital','url',1)}
+   <div class="full chk"><input type="checkbox" id="fAnt" ${o.aceitaAntesDefesa?'checked':''}><label for="fAnt" style="margin:0">Aceita inscrição antes da defesa (tese depositada ou defesa agendada)</label></div>
+   </div><div class="err" id="fErr"></div></div><div class="mfoot"><button class="btn" data-c>Cancelar</button><button class="btn primary" id="fOk">${novo?'Adicionar':'Salvar'}</button></div></div>`;
+  document.body.appendChild(layer);
+  layer.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>layer.remove());
+  layer.querySelector('#fOk').onclick=()=>{
+    layer.querySelectorAll('[data-k]').forEach(el=>{ o[el.dataset.k]=el.value.trim() });
+    o.uf=(o.uf||'').toUpperCase(); o.aceitaAntesDefesa=layer.querySelector('#fAnt').checked;
+    if(!o.instituicao){ layer.querySelector('#fErr').textContent='Informe a instituição.'; return }
+    if(novo){ o.id=(o.instituicao+'-'+(o.cargo||'')).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'-').slice(0,40).replace(/-$/,'')+'-'+Date.now().toString(36).slice(-4); o.criado=new Date().toISOString(); DB.oportunidades.push(o) }
+    else { const i=DB.oportunidades.findIndex(x=>x.id===o.id); DB.oportunidades[i]=o }
+    o.atualizado=new Date().toISOString();
+    layer.remove(); commit(); toast(novo?'Oportunidade adicionada':'Alterações salvas'); openDrawer(o.id) };
+}
+function openPerfil(){
+  const p=DB.perfil||{};
+  const layer=document.createElement('div'); layer.className='ovl center';
+  layer.innerHTML=`<div class="modal" style="width:min(520px,100%)"><div class="mhead"><h3>Perfil</h3><button class="btn ghost sm" data-c>✕</button></div><div class="mbody"><div class="form">
+   <div class="full"><label>Data da defesa (prevista ou marcada)</label><input type="date" id="pDef" value="${esc(p.defesa||'')}"></div>
+   <div class="full"><label>Nome</label><input id="pNome" value="${esc(p.nome||'')}"></div>
+   <div class="full"><label>Área de pesquisa</label><textarea id="pArea">${esc(p.area||'')}</textarea></div></div>
+   <p class="hint">A data da defesa define quais pós-docs aparecem como "Prazo depois da defesa".</p></div>
+   <div class="mfoot"><button class="btn" data-c>Cancelar</button><button class="btn primary" id="pOk">Salvar</button></div></div>`;
+  document.body.appendChild(layer);
+  layer.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>layer.remove());
+  layer.querySelector('#pOk').onclick=()=>{ DB.perfil={...p,defesa:$('#pDef').value,nome:$('#pNome').value.trim(),area:$('#pArea').value.trim()}; layer.remove(); commit(); toast('Perfil salvo') };
+}
+function csv(rows){ return rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(';')).join('\n') }
+function dl(name,txt,type){ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([txt],{type})); a.download=name; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),1000) }
+function openDados(){
+  const layer=document.createElement('div'); layer.className='ovl center';
+  layer.innerHTML=`<div class="modal" style="width:min(600px,100%)"><div class="mhead"><h3>Exportar e importar</h3><button class="btn ghost sm" data-c>✕</button></div><div class="mbody">
+   <p class="hint" style="margin-top:0">${store.mode==='github'?`Seus dados ficam em <code>${esc(store.cfg.owner)}/${esc(store.cfg.repo)}/${esc(store.cfg.path)}</code>. Cada alteração vira um commit.`:'Seus dados estão salvos neste navegador. Baixe um backup de vez em quando e guarde em <code>data/base.json</code> no repositório.'}</p>
+   <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="xJ">Baixar backup (.json)</button><button class="btn" id="xC">Baixar planilha (.csv)</button>${store.mode==='local'?'<button class="btn" id="xR">Recarregar do arquivo</button>':'<button class="btn" id="xR">Recarregar do GitHub</button>'}</div>
+   <label style="display:block;font-size:12.5px;font-weight:600;margin:16px 0 4px">Importar: cole o conteúdo de um backup (.json)</label><textarea class="notes" id="xT" placeholder='{"oportunidades":[…]}'></textarea>
+   <div class="err" id="xE"></div></div><div class="mfoot"><button class="btn" data-c>Fechar</button><button class="btn primary" id="xI">Importar</button></div></div>`;
+  document.body.appendChild(layer);
+  layer.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>layer.remove());
+  layer.querySelector('#xJ').onclick=()=>dl('base.json',JSON.stringify(DB,null,1),'application/json');
+  layer.querySelector('#xC').onclick=()=>dl('oportunidades.csv','﻿'+csv([['Tipo','Chance','Instituição','Cargo/modalidade','Abertura','Prazo','Situação','Salário/bolsa','Destaque','Meu status','Por que','Próximo passo','Link','Notas'],...ops().map(o=>[TIPO[o.tipo]||o.tipo,o.chance,o.instituicao,o.cargo,fdl(o.abertura),fdl(o.prazo),sit(o).t,o.remuneracao,o.destaque?'Sim':'',o.status,o.porque,o.proximoPasso,o.link,o.notas])]),'text/csv');
+  layer.querySelector('#xR').onclick=()=>{ if(store.mode==='local'){ if(confirm('Descartar as alterações deste navegador e recarregar data/base.json?')) store.reload() } else { store.reload(); layer.remove() } };
+  layer.querySelector('#xI').onclick=()=>{ try{ const j=JSON.parse($('#xT').value); if(!j.oportunidades) throw new Error('O arquivo não tem a lista "oportunidades".'); if(!confirm('Substituir a base atual pelo conteúdo colado?')) return; DB=j; layer.remove(); commit(); toast('Base importada') }catch(e){ $('#xE').textContent=e.message } };
+}
+function openGate(force){
+  const cur=ghCfg()||{owner:'wiliansventura98-collab',repo:'C-PDEFESA',branch:'main',path:'data/base.json',token:''};
+  const logged=!!ghCfg();
+  const layer=document.createElement('div'); layer.className='ovl center'; layer.style.zIndex=80;
+  layer.innerHTML=`<div class="modal gate" style="width:min(580px,100%)"><div class="mhead"><h3>${logged?'Conta do GitHub':'Entrar na base'}</h3>${force===true?'':'<button class="btn ghost sm" data-c>✕</button>'}</div><div class="mbody">
+   <p class="hint" style="margin:0">Este site é público, mas a sua base fica no repositório <b>privado</b> <code>${esc(cur.owner)}/${esc(cur.repo)}</code>. Para ver e salvar, cole uma chave de acesso do GitHub. Ela fica guardada só neste navegador.</p>
+   ${logged?'':`<ol><li>Abra <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com/settings/personal-access-tokens/new</a>.</li><li>Nome: <i>Base Pós-Defesa</i>. Validade: a que preferir.</li><li><b>Repository access</b> → <i>Only select repositories</i> → <b>${esc(cur.repo)}</b>.</li><li><b>Permissions</b> → <b>Contents</b> → <i>Read and write</i>.</li><li>Gere a chave e cole abaixo.</li></ol>`}
+   <div class="row2" style="grid-template-columns:1fr"><div><label for="gTok">Chave de acesso (token)</label><input id="gTok" type="password" placeholder="github_pat_…" value="${esc(cur.token||'')}" autocomplete="off"></div></div>
+   <details style="margin-top:10px"><summary class="hint" style="cursor:pointer">Repositório dos dados</summary>
+    <div class="row2"><div><label>Dono</label><input id="gOwn" value="${esc(cur.owner)}"></div><div><label>Repositório</label><input id="gRep" value="${esc(cur.repo)}"></div></div>
+    <div class="row2"><div><label>Branch</label><input id="gBr" value="${esc(cur.branch||'main')}"></div><div><label>Arquivo</label><input id="gPath" value="${esc(cur.path)}"></div></div></details>
+   <div class="err" id="gErr"></div></div>
+   <div class="mfoot">${logged?'<button class="btn danger" id="gOut">Sair deste dispositivo</button>':''}<button class="btn primary" id="gGo">${logged?'Salvar':'Entrar'}</button></div></div>`;
+  document.body.appendChild(layer);
+  const c=layer.querySelector('[data-c]'); if(c) c.onclick=()=>layer.remove();
+  const out=layer.querySelector('#gOut'); if(out) out.onclick=()=>{ if(!confirm('Remover a chave e os dados deste navegador? A base continua no GitHub.')) return; localStorage.removeItem(GHKEY); localStorage.removeItem(LKEY+'-ghcache'); location.reload() };
+  layer.querySelector('#gGo').onclick=async()=>{
+    const cfg={token:$('#gTok').value.trim().replace(/^(bearer|token)\s+/i,'').replace(/\s+/g,''),owner:$('#gOwn').value.trim(),repo:$('#gRep').value.trim(),branch:$('#gBr').value.trim()||'main',path:$('#gPath').value.trim()||'data/base.json'};
+    const err=$('#gErr'); if(!cfg.token){ err.textContent='Cole a chave de acesso.'; return }
+    err.textContent='Verificando…';
+    try{ let r; try{ r=await ghReq(cfg) }catch(n){ throw new Error('Não consegui falar com o GitHub (rede ou bloqueador). '+n.message) }
+      let gm=''; if(!r.ok){ try{ gm=(await r.clone().json()).message||'' }catch(e){} }
+      if(r.status===401) throw new Error('Erro 401: chave inválida ou expirada. '+gm);
+      if(r.status===403) throw new Error('Erro 403: a chave não tem permissão. Em Permissions → Contents, escolha "Read and write". '+gm);
+      if(r.status===404) throw new Error('Erro 404: a chave não enxerga o repositório '+cfg.repo+' ou o arquivo '+cfg.path+'. '+gm);
+      if(!r.ok) throw new Error('Erro '+r.status+'. '+gm);
+      localStorage.setItem(GHKEY,JSON.stringify(cfg)); localStorage.removeItem(LKEY+'-ghcache'); location.reload() }
+    catch(e){ err.textContent=e.message } };
+}
+
+// ---------- início ----------
+(function start(){
+  const cfg=ghCfg();
+  if(cfg&&cfg.token){ store=ghStore(cfg); renderSide(); setSt('Carregando do GitHub…') }
+  else if(isPages){ store={mode:'none',save(){}}; DB=null; renderSide(); $('#main').innerHTML='<p class="muted">Entre com sua chave do GitHub para ver a base.</p>'; openGate(true) }
+  else { store=localStore(); renderSide(); setBanner('Suas alterações ficam salvas neste navegador. Use <b>Exportar e importar → Baixar backup</b> e guarde o arquivo em <code>data/base.json</code>.') }
+})();
+</script>
+</body>
+</html>
