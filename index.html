@@ -228,13 +228,17 @@ const ic={
  dados:'<path d="M7 4v16M3 16l4 4 4-4M17 20V4M13 8l4-4 4 4"/>',
  conta:'<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>',
  perfil:'<path d="M8 2v4M16 2v4M3 9h18M5 5h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/>',
+ emp:'<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 13h18"/>',
  plus:'<path d="M12 5v14M5 12h14"/>',
  link:'<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>'
 };
 const I=k=>`<svg class="i" viewBox="0 0 24 24">${ic[k]}</svg>`;
 const STATUS=['A avaliar','Interessado','Preparando inscrição','Inscrito','Aprovado','Não aprovado','Descartado'];
 const CH={Alta:'var(--alta)','Média':'var(--media)',Baixa:'var(--baixa)'};
-const TIPO={concurso:'Concurso docente',posdoc:'Pós-doutorado',bolsa:'Bolsa ou edital de pesquisa',outro:'Outro'};
+const TIPO={concurso:'Concurso docente',posdoc:'Pós-doutorado',bolsa:'Bolsa ou edital de pesquisa',emprego:'Emprego',linkedin:'Vaga no LinkedIn',outro:'Outro'};
+// grupo de cada tipo: concursos, pós-doc (inclui bolsas) e empregos
+const G=o=>o.tipo==='concurso'?'conc':(o.tipo==='emprego'||o.tipo==='linkedin')?'emp':'pd';
+const isPD=o=>G(o)==='pd';
 
 // ---------- estado ----------
 let DB=null, store=null, view='painel', openId=null;
@@ -315,11 +319,11 @@ function commit(){ store.save(); render() }
 // ---------- barra lateral ----------
 function renderSide(){
   const os=ops(), ab=o=>sit(o).k!=='enc';
-  const nC=os.filter(o=>o.tipo==='concurso'&&ab(o)).length, nP=os.filter(o=>o.tipo!=='concurso'&&ab(o)).length;
+  const nC=os.filter(o=>o.tipo==='concurso'&&ab(o)).length, nP=os.filter(o=>isPD(o)&&ab(o)).length, nJ=os.filter(o=>G(o)==='emp'&&ab(o)).length;
   const nE=(DB?.encerrados||[]).length+os.filter(o=>!ab(o)).length;
   const t=(k,l,n)=>`<button class="tab ${view===k?'on':''}" data-v="${k}">${I(k)}<span>${l}</span>${n!=null?`<span class="n">${n}</span>`:''}</button>`;
   $('#side').innerHTML=`<div class="brand"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M16 4 4 27h24z"/><path d="M10 20c2-1.5 4-1.5 6 0s4 1.5 6 0M12.5 14.5c1.2-.9 2.4-.9 3.5 0s2.3.9 3.5 0"/></svg><div><b>Pós-Defesa</b><small>Concursos e pós-doc</small></div></div>
-   ${t('painel','Painel')}${t('conc','Concursos',nC)}${t('pd','Pós-doutorado',nP)}${t('fontes','Fontes e alertas')}${t('mapa','Mapa')}${t('enc','Encerrados',nE)}
+   ${t('painel','Painel')}${t('conc','Concursos',nC)}${t('pd','Pós-doutorado',nP)}${t('emp','Empregos',nJ)}${t('fontes','Fontes e alertas')}${t('mapa','Mapa')}${t('enc','Encerrados',nE)}
    <div class="side-foot"><div class="sync" id="syncSt">${store?.mode==='github'?'':'Dados neste navegador'}</div>
    <button class="btn" id="bPerfil">${I('perfil')} Data da defesa</button>
    <button class="btn" id="bDados">${I('dados')} Exportar e importar</button>
@@ -341,14 +345,15 @@ function render(){
   const m=$('#main');
   if(view==='painel') m.innerHTML=vPainel();
   else if(view==='conc') m.innerHTML=vLista('concurso');
-  else if(view==='pd') m.innerHTML=vLista('posdoc');
+  else if(view==='pd') m.innerHTML=vLista('pd');
+  else if(view==='emp') m.innerHTML=vLista('emp');
   else if(view==='fontes') m.innerHTML=vFontes();
   else if(view==='mapa') m.innerHTML=vMapa();
   else if(view==='enc') m.innerHTML=vEnc();
   bind();
 }
 function bind(){
-  const a=$('#bAdd'); if(a) a.onclick=()=>openForm(null,view==='pd'?'posdoc':'concurso');
+  const a=$('#bAdd'); if(a) a.onclick=()=>openForm(null,view==='pd'?'posdoc':view==='emp'?'emprego':'concurso');
   document.querySelectorAll('[data-open]').forEach(el=>el.onclick=e=>{ if(e.target.closest('.star,select,a,button:not([data-open])')) return; openDrawer(el.dataset.open) });
   document.querySelectorAll('.star[data-id]').forEach(b=>b.onclick=e=>{ e.stopPropagation(); const o=ops().find(x=>x.id===b.dataset.id); o.destaque=!o.destaque; commit() });
   document.querySelectorAll('select[data-st]').forEach(s=>{ s.onclick=e=>e.stopPropagation(); s.onchange=()=>{ const o=ops().find(x=>x.id===s.dataset.st); o.status=s.value; commit(); toast('Status: '+s.value) } });
@@ -383,17 +388,17 @@ function vPainel(){
       <div><div class="scale-bar"><div class="scale-fill" style="width:${pct}%"></div></div><div class="scale-l"><span>30 dias antes</span><span>${fd(nx.d)}</span></div></div>
       ${ev.length>1?`<div><p class="lbl" style="margin-bottom:4px">Depois disso</p>${ev.slice(1,5).map(e=>{const k=days(e.d);return `<div class="nx" ${e.o?`data-open="${e.o.id}"`:''}><span class="nx-d" style="color:${urg(k)}">${k}d</span><div><div class="nx-t">${esc(e.t)}</div><div class="nx-s">${e.o?esc(e.o.instituicao)+' · '+esc(short(e.o.cargo,50))+(e.extra?esc(e.extra):''):'Defesa'} · ${fd(e.d)}</div></div></div>`}).join('')}</div>`:''}</div>`;
   } else hero=`<div class="card next"><p class="lbl">Próximo prazo</p><p class="muted">Nenhum prazo futuro cadastrado.</p></div>`;
-  const nCa=abertas.filter(o=>o.tipo==='concurso').length, nPa=abertas.filter(o=>o.tipo!=='concurso').length;
+  const nCa=abertas.filter(o=>o.tipo==='concurso').length, nPa=abertas.filter(isPD).length, nJa=abertas.filter(o=>G(o)==='emp').length;
   const nAlta=abertas.filter(o=>o.chance==='Alta').length, nDest=abertas.filter(o=>o.destaque).length;
   const def=DB.perfil.defesa, dd=days(def);
   const stats=`<div class="card stats"><p class="lbl">Resumo</p><dl>
     <div><dt>Concursos vigentes</dt><dd>${nCa}</dd></div><div><dt>Pós-doc vigentes</dt><dd>${nPa}</dd></div>
-    <div><dt>Chance alta</dt><dd style="color:var(--alta)">${nAlta}</dd></div><div><dt>Em destaque</dt><dd style="color:var(--star)">${nDest}</dd></div>
-    <div class="wide"><dt>Defesa da tese</dt>${def?`<dd>${dd>=0?dd+' dias':'Defendida'}</dd><small>${fdl(def)}</small>`:`<dd style="font-size:18px"><button class="btn sm" id="bDef">Informar a data</button></dd><small>As chances e a elegibilidade dos pós-docs dependem dela.</small>`}</div></dl></div>`;
+    <div><dt>Empregos vigentes</dt><dd>${nJa}</dd></div><div><dt>Chance alta</dt><dd style="color:var(--alta)">${nAlta}</dd></div><div><dt>Em destaque</dt><dd style="color:var(--star)">${nDest}</dd></div>
+    <div><dt>Defesa da tese</dt>${def?`<dd>${dd>=0?dd+' dias':'Defendida'}</dd><small>${fdl(def)}</small>`:`<dd style="font-size:18px"><button class="btn sm" id="bDef">Informar a data</button></dd><small>As chances e a elegibilidade dos pós-docs dependem dela.</small>`}</div></dl></div>`;
   // alertas
   const al=[];
   abertas.forEach(o=>{
-    const dp=days(o.prazo), da=days(o.abertura), e=o.tipo!=='concurso'?elig(o):null;
+    const dp=days(o.prazo), da=days(o.abertura), e=isPD(o)?elig(o):null;
     if(dp!==null&&dp>=0&&dp<=30&&!['Descartado','Inscrito'].includes(o.status)) al.push({d0:o.prazo,c:dp<=7?'crit':'warn',o,t:'Inscrições terminam em '+dp+(dp===1?' dia':' dias'),d:fdl(o.prazo)+(o.status==='A avaliar'?' · Você ainda não avaliou esta oportunidade.':'')});
     if(da!==null&&da>0&&da<=14) al.push({d0:o.abertura,c:'ok',o,t:'Inscrições abrem em '+da+(da===1?' dia':' dias'),d:fdl(o.abertura)+(o.proximoPasso?' · '+o.proximoPasso:'')});
     if(e&&e.k==='n'&&o.chance!=='Baixa') al.push({c:'warn',o,t:'Prazo antes da sua defesa',d:'Confira se o edital aceita tese depositada.'});
@@ -405,7 +410,7 @@ function vPainel(){
   const alertas=`<div class="card sec"><div class="sec-h"><div><h3>Alertas</h3><p>${al.length} ${al.length===1?'aviso':'avisos'} · calculados a partir das datas de cada edital</p></div></div>
     ${al.length?al.map(a=>`<div class="arow ${a.c}" ${a.o?`data-open="${a.o.id}"`:'id="bDef2"'}><span class="dot"></span><div><b>${esc(a.t)}</b>${a.o?` <span class="muted">· ${esc(a.o.instituicao)}</span>`:''}<div class="d">${esc(a.d)}</div></div></div>`).join(''):'<p class="muted">Nada urgente.</p>'}</div>`;
   // pós-doc pós-defesa
-  const pds=abertas.filter(o=>o.tipo!=='concurso').sort((a,b)=>rankCh(a)-rankCh(b)||(b.destaque-a.destaque));
+  const pds=abertas.filter(isPD).sort((a,b)=>rankCh(a)-rankCh(b)||(b.destaque-a.destaque));
   const pdsec=`<div class="card sec"><div class="sec-h"><div><h3>Pós-doutorados para depois da defesa</h3><p>Vigentes ou em fluxo contínuo, com a situação em relação à data da sua defesa</p></div><button class="btn sm" data-go="pd">Ver todos</button></div>
     <div class="pd-grid">${pds.map(o=>{const e=elig(o),s=sit(o);return `<div class="pd" style="--cc:${CH[o.chance]||'var(--line2)'}" data-open="${o.id}">
       <div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><span class="pill" style="--sc:${CH[o.chance]}">Chance ${esc((o.chance||'').toLowerCase())}</span>${o.destaque?'<span style="color:var(--star)">★</span>':''}</div>
@@ -427,17 +432,17 @@ function short(s,n=70){ s=String(s||''); return s.length>n?s.slice(0,n-1).trimEn
 function card(o){
   const s=sit(o), dp=days(o.prazo), da=days(o.abertura), c=CH[o.chance]||'var(--line2)';
   const prazoCell=o.prazo?`<dd style="color:${dp<0?'var(--ink3)':urg(dp)}">${fd(o.prazo)}<small>${dp<0?'encerrado':dp+' dias'}</small></dd>`:`<dd>—<small>${esc(o.situacao||'sem prazo')}</small></dd>`;
-  const e=o.tipo!=='concurso'?elig(o):null;
+  const e=isPD(o)?elig(o):null;
   return `<article class="cc ${s.k==='enc'?'past':''}" style="--cc:${c}" data-open="${o.id}">
    <div class="cc-top"><div><span class="pill" style="--sc:${c}">Chance ${esc((o.chance||'?').toLowerCase())}</span> <span class="tag">${esc(s.t)}</span>${e?` <span class="elig ${e.k}">${esc(e.t)}</span>`:''}</div><button class="star ${o.destaque?'on':''}" data-id="${o.id}" title="Destaque">${o.destaque?'★':'☆'}</button></div>
    <div><h3>${esc(o.instituicao)}</h3><div class="role">${esc(o.cargo)}</div></div>
-   <dl class="kv"><div><dt>Abertura</dt><dd>${fd(o.abertura)}${da!==null&&da>0?`<small>em ${da} dias</small>`:'<small>&nbsp;</small>'}</dd></div><div><dt>Prazo</dt>${prazoCell}</div><div><dt>${o.tipo==='concurso'?'Salário':'Bolsa'}</dt><dd style="font-size:13.5px">${esc(short(o.remuneracao||'—',28))}</dd></div></dl>
+   <dl class="kv"><div><dt>Abertura</dt><dd>${fd(o.abertura)}${da!==null&&da>0?`<small>em ${da} dias</small>`:'<small>&nbsp;</small>'}</dd></div><div><dt>Prazo</dt>${prazoCell}</div><div><dt>${isPD(o)?'Bolsa':'Salário'}</dt><dd style="font-size:13.5px">${esc(short(o.remuneracao||'—',28))}</dd></div></dl>
    ${o.porque?`<p class="why">${esc(o.porque)}</p>`:''}
    <div class="cc-foot"><select class="sel" data-st="${o.id}">${STATUS.map(x=>`<option ${x===(o.status||'A avaliar')?'selected':''}>${x}</option>`).join('')}</select>${o.notas?'<span class="muted">· tem notas</span>':''}${o.link?`<a href="${esc(o.link)}" target="_blank" rel="noopener" style="margin-left:auto;font-size:13px">Edital ↗</a>`:''}</div></article>`;
 }
 function vLista(tipo){
-  const isC=tipo==='concurso';
-  let l=ops().filter(o=>isC?o.tipo==='concurso':o.tipo!=='concurso');
+  const isC=tipo==='concurso'||tipo==='conc', g=isC?'conc':tipo;
+  let l=ops().filter(o=>G(o)===g);
   const tot=l.length;
   if(F.mostrar==='abertos') l=l.filter(o=>sit(o).k!=='enc');
   if(F.chance) l=l.filter(o=>o.chance===F.chance);
@@ -451,7 +456,7 @@ function vLista(tipo){
     <select class="sel" id="fst"><option value="">Todos os status</option>${STATUS.map(x=>`<option ${F.status===x?'selected':''}>${x}</option>`).join('')}</select>
     <div class="chips">${chip('mostrar','abertos','Vigentes')}${chip('mostrar','todos','Todos')}</div></div>`;
   const leg=`<div class="legend" style="margin:-6px 0 16px"><span><i style="background:var(--alta)"></i>Alta: ${esc(short(DB.criterios?.Alta||'',90))}</span><span><i style="background:var(--media)"></i>Média</span><span><i style="background:var(--baixa)"></i>Baixa</span></div>`;
-  return header(isC?'Concursos docentes':'Pós-doutorado',`${l.length} de ${tot} ${isC?'concursos':'oportunidades'}${isC?'':' · a etiqueta verde indica o que você pode pleitear depois da defesa'}`)+tb+leg+(l.length?`<div class="grid">${l.map(card).join('')}</div>`:'<div class="empty">Nada encontrado com esses filtros.</div>');
+  return header(isC?'Concursos docentes':g==='emp'?'Empregos':'Pós-doutorado',`${l.length} de ${tot} ${isC?'concursos':g==='emp'?'vagas (inclui LinkedIn)':'oportunidades'}${g==='pd'?' · a etiqueta verde indica o que você pode pleitear depois da defesa':''}`)+tb+leg+(l.length?`<div class="grid">${l.map(card).join('')}</div>`:'<div class="empty">Nada encontrado com esses filtros.</div>');
 }
 function vFontes(){
   const t=(k,l)=>`<button class="chip ${fontesTab===k?'on':''}" data-ft="${k}">${l}</button>`;
@@ -520,13 +525,13 @@ function drawMap(){
 // ---------- ficha ----------
 function openDrawer(id){
   const o=ops().find(x=>x.id===id); if(!o) return; openId=id;
-  const s=sit(o), e=o.tipo!=='concurso'?elig(o):null, c=CH[o.chance];
+  const s=sit(o), e=isPD(o)?elig(o):null, c=CH[o.chance];
   const f=(l,v,full)=>v?`<div class="${full?'full':''}"><span>${l}</span><b>${esc(v)}</b></div>`:'';
   const layer=document.createElement('div'); layer.className='ovl';
   layer.innerHTML=`<div class="drawer"><div class="dhead"><div><span class="pill" style="--sc:${c}">Chance ${esc((o.chance||'').toLowerCase())}</span> <span class="tag">${esc(TIPO[o.tipo]||o.tipo)}</span> <span class="tag">${esc(s.t)}</span>${e?` <span class="elig ${e.k}">${esc(e.t)}</span>`:''}<h2>${esc(o.instituicao)}</h2><div class="sub">${esc(o.cargo)}</div></div>
    <div style="display:flex;gap:6px"><button class="star ${o.destaque?'on':''}" id="dStar" title="Destaque">${o.destaque?'★':'☆'}</button><button class="btn ghost sm" id="dX">✕</button></div></div>
    <div class="facts">${f('Abertura',o.abertura?fdl(o.abertura):'')}${f('Prazo',o.prazo?fdl(o.prazo)+(days(o.prazo)>=0?' ('+days(o.prazo)+' dias)':''):(o.situacao||''))}
-    ${f(o.tipo==='concurso'?'Salário':'Bolsa',o.remuneracao)}${f('Vagas',o.vagas)}${f('Duração',o.duracao)}${f('Titulação exigida',o.titulacao,1)}${f('Elegibilidade',o.elegibilidade,1)}</div>
+    ${f(isPD(o)?'Bolsa':'Salário',o.remuneracao)}${f('Vagas',o.vagas)}${f('Duração',o.duracao)}${f('Titulação exigida',o.titulacao,1)}${f('Elegibilidade',o.elegibilidade,1)}</div>
    ${o.porque?`<div class="box"><h4>Por que essa chance</h4><p>${esc(o.porque)}</p></div>`:''}
    ${o.proximoPasso?`<div class="box"><h4>Próximo passo</h4><p>${esc(o.proximoPasso)}</p></div>`:''}
    <div class="box"><h4>Meu acompanhamento</h4><div class="row2"><div><label>Meu status</label><select class="sel" id="dSt" style="width:100%">${STATUS.map(x=>`<option ${x===(o.status||'A avaliar')?'selected':''}>${x}</option>`).join('')}</select></div><div><label>Chance</label><select class="sel" id="dCh" style="width:100%">${['Alta','Média','Baixa'].map(x=>`<option ${x===o.chance?'selected':''}>${x}</option>`).join('')}</select></div></div>
@@ -542,7 +547,7 @@ function openDrawer(id){
   layer.querySelector('#dCh').onchange=ev=>{ o.chance=ev.target.value; store.save() };
   let nt; layer.querySelector('#dNo').oninput=ev=>{ clearTimeout(nt); nt=setTimeout(()=>{ o.notas=ev.target.value; store.save() },600) };
   layer.querySelector('#dEd').onclick=()=>{ layer.remove(); openForm(o) };
-  const mv=layer.querySelector('#dMv'); if(mv) mv.onclick=()=>{ DB.encerrados=DB.encerrados||[]; DB.encerrados.unshift({tipo:o.tipo==='concurso'?'Concurso':'Pós-doc',instituicao:o.instituicao,area:o.cargo,periodo:(o.abertura?fdl(o.abertura)+' a ':'até ')+fdl(o.prazo),remuneracao:o.remuneracao||'',link:o.link||'',meuStatus:o.status,notas:o.notas||''}); DB.oportunidades=ops().filter(x=>x!==o); store.save(); close(); toast('Movido para Encerrados') };
+  const mv=layer.querySelector('#dMv'); if(mv) mv.onclick=()=>{ DB.encerrados=DB.encerrados||[]; DB.encerrados.unshift({tipo:TIPO[o.tipo]||o.tipo,instituicao:o.instituicao,area:o.cargo,periodo:(o.abertura?fdl(o.abertura)+' a ':'até ')+fdl(o.prazo),remuneracao:o.remuneracao||'',link:o.link||'',meuStatus:o.status,notas:o.notas||''}); DB.oportunidades=ops().filter(x=>x!==o); store.save(); close(); toast('Movido para Encerrados') };
   layer.querySelector('#dDel').onclick=()=>{ if(!confirm('Excluir "'+o.instituicao+'"?')) return; DB.oportunidades=ops().filter(x=>x!==o); store.save(); close() };
   document.addEventListener('keydown',function k(ev){ if(ev.key==='Escape'&&document.body.contains(layer)){ close(); document.removeEventListener('keydown',k) } });
 }
