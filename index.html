@@ -128,6 +128,16 @@ select.sel{padding:7px 10px;border:1px solid var(--line2);border-radius:5px;back
 .st{font-size:12.5px;font-weight:600;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--ink2);border:1px solid var(--line)}
 .star{border:0;background:transparent;cursor:pointer;font-size:20px;line-height:1;color:var(--line2);padding:0 2px}
 .star.on{color:var(--star)}
+.disc{border:0;background:transparent;cursor:pointer;font-size:16px;line-height:1;color:var(--ink3);padding:2px 5px;border-radius:4px}
+.disc:hover{color:#fff;background:var(--danger)}
+.mp{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.mp ol{margin:0;padding:0;list-style:none;counter-reset:r}
+.mp li{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px dotted var(--line2);cursor:pointer;counter-increment:r}
+.mp li:last-child{border-bottom:0}
+.mp li::before{content:counter(r);font-weight:800;font-size:18px;width:20px;flex:none;color:var(--k);font-variation-settings:'wdth' 75}
+.mp li>div{flex:1;min-width:0}
+.mp li:hover .nx-t{color:var(--accent)}
+@media (max-width:920px){.mp{grid-template-columns:1fr}}
 .star:hover{color:var(--star)}
 .empty{padding:40px 20px;text-align:center;color:var(--ink3);border:1px dashed var(--line2);border-radius:6px;background:#fff}
 /* tabelas */
@@ -239,6 +249,7 @@ const TIPO={concurso:'Concurso docente',posdoc:'Pós-doutorado',bolsa:'Bolsa ou 
 // grupo de cada tipo: concursos, pós-doc (inclui bolsas) e empregos
 const G=o=>o.tipo==='concurso'?'conc':(o.tipo==='emprego'||o.tipo==='linkedin')?'emp':'pd';
 const isPD=o=>G(o)==='pd';
+const DESC=o=>o.status==='Descartado';
 
 // ---------- estado ----------
 let DB=null, store=null, view='painel', openId=null;
@@ -318,7 +329,7 @@ function commit(){ store.save(); render() }
 
 // ---------- barra lateral ----------
 function renderSide(){
-  const os=ops(), ab=o=>sit(o).k!=='enc';
+  const os=ops().filter(o=>!DESC(o)), ab=o=>sit(o).k!=='enc';
   const nC=os.filter(o=>o.tipo==='concurso'&&ab(o)).length, nP=os.filter(o=>isPD(o)&&ab(o)).length, nJ=os.filter(o=>G(o)==='emp'&&ab(o)).length;
   const nE=(DB?.encerrados||[]).length+os.filter(o=>!ab(o)).length;
   const t=(k,l,n)=>`<button class="tab ${view===k?'on':''}" data-v="${k}">${I(k)}<span>${l}</span>${n!=null?`<span class="n">${n}</span>`:''}</button>`;
@@ -356,6 +367,7 @@ function bind(){
   const a=$('#bAdd'); if(a) a.onclick=()=>openForm(null,view==='pd'?'posdoc':view==='emp'?'emprego':'concurso');
   document.querySelectorAll('[data-open]').forEach(el=>el.onclick=e=>{ if(e.target.closest('.star,select,a,button:not([data-open])')) return; openDrawer(el.dataset.open) });
   document.querySelectorAll('.star[data-id]').forEach(b=>b.onclick=e=>{ e.stopPropagation(); const o=ops().find(x=>x.id===b.dataset.id); o.destaque=!o.destaque; commit() });
+  document.querySelectorAll('[data-disc]').forEach(b=>b.onclick=e=>{ e.stopPropagation(); discard(b.dataset.disc) });
   document.querySelectorAll('select[data-st]').forEach(s=>{ s.onclick=e=>e.stopPropagation(); s.onchange=()=>{ const o=ops().find(x=>x.id===s.dataset.st); o.status=s.value; commit(); toast('Status: '+s.value) } });
   const q=$('#fq'); if(q){ q.oninput=()=>{ F.q=q.value; const pos=q.selectionStart; render(); const n=$('#fq'); n.focus(); n.setSelectionRange(pos,pos) } }
   document.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{ const [k,v]=b.dataset.f.split(':'); if(k==='dest') F.dest=!F.dest; else F[k]=F[k]===v&&k!=='mostrar'?'':v; render() });
@@ -367,7 +379,7 @@ function bind(){
 }
 
 function vPainel(){
-  const os=ops(), abertas=os.filter(o=>sit(o).k!=='enc');
+  const os=ops().filter(o=>!DESC(o)), abertas=os.filter(o=>sit(o).k!=='enc');
   // eventos: aberturas e prazos futuros
   const ev=[];
   abertas.forEach(o=>{
@@ -421,7 +433,7 @@ function vPainel(){
   const dest=os.filter(o=>o.destaque&&sit(o).k!=='enc');
   const dsec=dest.length?`<div class="sec-h" style="margin-top:6px"><div><h3>Em destaque ★</h3><p>Oportunidades que você marcou com estrela</p></div></div><div class="grid">${dest.map(card).join('')}</div>`:'';
   setTimeout(()=>{ document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{ view=b.dataset.go; render() }); const b2=$('#bDef2'); if(b2) b2.onclick=openPerfil },0);
-  return header('Painel',`${abertas.length} oportunidades vigentes em acompanhamento`)+`<div class="hero">${hero}${stats}</div>${alertas}${pdsec}${dsec}`;
+  return header('Painel',`${abertas.length} oportunidades vigentes em acompanhamento`)+`<div class="hero">${hero}${stats}</div>${melhoresPiores(abertas)}${alertas}${pdsec}${dsec}`;
 }
 // junta subáreas do mesmo edital (mesmo link, mesma data e mesmo aviso)
 function groupEv(arr){ const seen={}; for(let i=arr.length-1;i>=0;i--){ const e=arr[i]; if(!e.o||!e.o.link) continue; const k=e.t+'|'+(e.d||'')+'|'+e.o.link; if(seen[k]){ seen[k].n=(seen[k].n||1)+1; arr.splice(i,1) } else seen[k]=e }
@@ -431,19 +443,38 @@ function short(s,n=70){ s=String(s||''); return s.length>n?s.slice(0,n-1).trimEn
 
 function card(o){
   const s=sit(o), dp=days(o.prazo), da=days(o.abertura), c=CH[o.chance]||'var(--line2)';
-  const prazoCell=o.prazo?`<dd style="color:${dp<0?'var(--ink3)':urg(dp)}">${fd(o.prazo)}<small>${dp<0?'encerrado':dp+' dias'}</small></dd>`:`<dd>—<small>${esc(o.situacao||'sem prazo')}</small></dd>`;
+  const prazoCell=o.prazo?`<dd style="color:${dp<0?'var(--ink3)':urg(dp)}">${fd(o.prazo)}<small>${dp<0?'encerrado':dp+(dp===1?' dia':' dias')}</small></dd>`:`<dd>—<small>${esc(o.situacao||'sem prazo')}</small></dd>`;
   const e=isPD(o)?elig(o):null;
   return `<article class="cc ${s.k==='enc'?'past':''}" style="--cc:${c}" data-open="${o.id}">
-   <div class="cc-top"><div><span class="pill" style="--sc:${c}">Chance ${esc((o.chance||'?').toLowerCase())}</span> <span class="tag">${esc(s.t)}</span>${e?` <span class="elig ${e.k}">${esc(e.t)}</span>`:''}</div><button class="star ${o.destaque?'on':''}" data-id="${o.id}" title="Destaque">${o.destaque?'★':'☆'}</button></div>
+   <div class="cc-top"><div><span class="pill" style="--sc:${c}">Chance ${esc((o.chance||'?').toLowerCase())}</span> <span class="tag">${esc(s.t)}</span>${e?` <span class="elig ${e.k}">${esc(e.t)}</span>`:''}</div><div style="display:flex;gap:2px;flex:none"><button class="star ${o.destaque?'on':''}" data-id="${o.id}" title="Destaque">${o.destaque?'★':'☆'}</button><button class="disc" data-disc="${o.id}" title="${DESC(o)?'Restaurar':'Descartar: não vai dar certo'}">${DESC(o)?'↺':'✕'}</button></div></div>
    <div><h3>${esc(o.instituicao)}</h3><div class="role">${esc(o.cargo)}</div></div>
    <dl class="kv"><div><dt>Abertura</dt><dd>${fd(o.abertura)}${da!==null&&da>0?`<small>em ${da} dias</small>`:'<small>&nbsp;</small>'}</dd></div><div><dt>Prazo</dt>${prazoCell}</div><div><dt>${isPD(o)?'Bolsa':'Salário'}</dt><dd style="font-size:13.5px">${esc(short(o.remuneracao||'—',28))}</dd></div></dl>
    ${o.porque?`<p class="why">${esc(o.porque)}</p>`:''}
    <div class="cc-foot"><select class="sel" data-st="${o.id}">${STATUS.map(x=>`<option ${x===(o.status||'A avaliar')?'selected':''}>${x}</option>`).join('')}</select>${o.notas?'<span class="muted">· tem notas</span>':''}${o.link?`<a href="${esc(o.link)}" target="_blank" rel="noopener" style="margin-left:auto;font-size:13px">Edital ↗</a>`:''}</div></article>`;
 }
+function discard(id){ const o=ops().find(x=>x.id===id); if(!o) return;
+  if(DESC(o)){ o.status=o.statusAntes||'A avaliar'; delete o.statusAntes; commit(); toast('Restaurado'); return }
+  o.statusAntes=o.status||'A avaliar'; o.status='Descartado'; o.destaque=false; commit();
+  const t=document.createElement('div'); t.className='toast'; t.innerHTML='Descartado. <button class="btn sm" style="margin-left:10px">Desfazer</button>'; document.body.appendChild(t);
+  t.querySelector('button').onclick=()=>{ t.remove(); discard(id) }; setTimeout(()=>t.remove(),5000) }
+// pontuação para "melhores e piores": usa rank/alerta da varredura quando houver
+function score(o){ let s=({Alta:0,'Média':40,Baixa:80}[o.chance]??60); const e=isPD(o)?elig(o):null; if(e&&e.k==='n') s+=30; if(e&&e.k==='y') s-=5; const d=days(o.prazo); if(d!==null&&d>=0) s+=Math.min(d,120)/12; if(o.destaque) s-=15; return s }
+function melhoresPiores(abertas){
+  const l=abertas.filter(o=>!['Inscrito','Aprovado','Não aprovado'].includes(o.status));
+  const hasR=l.some(o=>o.alerta||o.rank!=null);
+  const ord=(a,b)=>((a.rank??999)-(b.rank??999))||score(a)-score(b);
+  const best=(hasR?l.filter(o=>o.alerta==='melhor').sort(ord):l.filter(o=>o.chance!=='Baixa').sort((a,b)=>score(a)-score(b))).slice(0,5);
+  const worst=(hasR?l.filter(o=>o.alerta==='pior').sort(ord):l.filter(o=>!best.includes(o)&&(o.chance==='Baixa'||(isPD(o)&&elig(o).k==='n'))).sort((a,b)=>score(b)-score(a))).slice(0,5);
+  const li=(o,k)=>{ const d=days(o.prazo); return `<li data-open="${o.id}" style="--k:${k}"><div><div class="nx-t">${esc(o.instituicao)} <span class="pill" style="--sc:${CH[o.chance]}">${esc(o.chance||'')}</span></div><div class="nx-s">${esc(short(o.cargo,80))} · ${o.prazo?(d>=0?'fecha em '+d+' dias':'encerrado'):esc(sit(o).t)}</div></div><button class="disc" data-disc="${o.id}" title="Descartar">✕</button></li>` };
+  return `<div class="card sec"><div class="sec-h"><div><h3>Melhores e piores do dia</h3><p>${hasR?'Ordem da varredura diária':'Ordem pela chance, pela data da defesa e pelo prazo'} · clique em ✕ para descartar o que não vai dar certo</p></div></div>
+   <div class="mp"><div><p class="lbl" style="color:var(--alta);margin-bottom:4px">Vale priorizar</p><ol>${best.map(o=>li(o,'var(--alta)')).join('')||'<p class="muted">Nada por enquanto.</p>'}</ol></div>
+   <div><p class="lbl" style="color:var(--baixa);margin-bottom:4px">Provavelmente não vale</p><ol>${worst.map(o=>li(o,'var(--baixa)')).join('')||'<p class="muted">Nada por enquanto.</p>'}</ol></div></div></div>` }
 function vLista(tipo){
   const isC=tipo==='concurso'||tipo==='conc', g=isC?'conc':tipo;
   let l=ops().filter(o=>G(o)===g);
   const tot=l.length;
+  const nDesc=l.filter(DESC).length;
+  l=F.mostrar==='desc'?l.filter(DESC):l.filter(o=>!DESC(o));
   if(F.mostrar==='abertos') l=l.filter(o=>sit(o).k!=='enc');
   if(F.chance) l=l.filter(o=>o.chance===F.chance);
   if(F.status) l=l.filter(o=>(o.status||'A avaliar')===F.status);
@@ -454,7 +485,7 @@ function vLista(tipo){
   const tb=`<div class="toolbar"><input type="search" id="fq" placeholder="Buscar por instituição, área, cidade…" value="${esc(F.q)}">
     <div class="chips">${chip('chance','Alta','Alta')}${chip('chance','Média','Média')}${chip('chance','Baixa','Baixa')}<button class="chip ${F.dest?'on':''}" data-f="dest:1">★ Destaques</button></div>
     <select class="sel" id="fst"><option value="">Todos os status</option>${STATUS.map(x=>`<option ${F.status===x?'selected':''}>${x}</option>`).join('')}</select>
-    <div class="chips">${chip('mostrar','abertos','Vigentes')}${chip('mostrar','todos','Todos')}</div></div>`;
+    <div class="chips">${chip('mostrar','abertos','Vigentes')}${chip('mostrar','todos','Todos')}${chip('mostrar','desc','Descartados'+(nDesc?' ('+nDesc+')':''))}</div></div>`;
   const leg=`<div class="legend" style="margin:-6px 0 16px"><span><i style="background:var(--alta)"></i>Alta: ${esc(short(DB.criterios?.Alta||'',90))}</span><span><i style="background:var(--media)"></i>Média</span><span><i style="background:var(--baixa)"></i>Baixa</span></div>`;
   return header(isC?'Concursos docentes':g==='emp'?'Empregos':'Pós-doutorado',`${l.length} de ${tot} ${isC?'concursos':g==='emp'?'vagas (inclui LinkedIn)':'oportunidades'}${g==='pd'?' · a etiqueta verde indica o que você pode pleitear depois da defesa':''}`)+tb+leg+(l.length?`<div class="grid">${l.map(card).join('')}</div>`:'<div class="empty">Nada encontrado com esses filtros.</div>');
 }
@@ -473,7 +504,7 @@ function vFontes(){
   return header('Fontes e alertas','Onde as oportunidades aparecem e o que vale monitorar',false)+`<div class="toolbar"><div class="chips">${t('monitorar','Monitorar (recorrentes)')}${t('inst','Instituições monitoradas')}${t('sug','Alertas sugeridos')}</div></div>`+body;
 }
 function vEnc(){
-  const auto=ops().filter(o=>sit(o).k==='enc');
+  const auto=ops().filter(o=>sit(o).k==='enc'&&!DESC(o));
   const man=DB.encerrados||[];
   return header('Encerrados','Editais com inscrições já fechadas, para referência do próximo ciclo',false)+
    (auto.length?`<div class="sec-h"><div><h3>Da sua base</h3><p>O prazo passou. Use "Mover para encerrados" na ficha para arquivar.</p></div></div><div class="grid" style="margin-bottom:24px">${auto.map(card).join('')}</div>`:'')+
@@ -488,7 +519,7 @@ function vMapa(){
 }
 function drawMap(){
   const box=$('#mapBox'); if(!box||!GEO) return;
-  const inst=DB.instituicoes||[], os=ops().filter(o=>sit(o).k!=='enc');
+  const inst=DB.instituicoes||[], os=ops().filter(o=>sit(o).k!=='enc'&&!DESC(o));
   const cnt={}; inst.forEach(x=>String(x.uf).split('/').forEach(u=>{ cnt[u]=(cnt[u]||0)+1 }));
   const opc={}; os.forEach(o=>{ if(o.uf&&o.uf!=='EX') (opc[o.uf]=opc[o.uf]||[]).push(o) });
   const max=Math.max(1,...Object.values(cnt));
@@ -536,7 +567,7 @@ function openDrawer(id){
    ${o.proximoPasso?`<div class="box"><h4>Próximo passo</h4><p>${esc(o.proximoPasso)}</p></div>`:''}
    <div class="box"><h4>Meu acompanhamento</h4><div class="row2"><div><label>Meu status</label><select class="sel" id="dSt" style="width:100%">${STATUS.map(x=>`<option ${x===(o.status||'A avaliar')?'selected':''}>${x}</option>`).join('')}</select></div><div><label>Chance</label><select class="sel" id="dCh" style="width:100%">${['Alta','Média','Baixa'].map(x=>`<option ${x===o.chance?'selected':''}>${x}</option>`).join('')}</select></div></div>
     <label style="display:block;font-size:12.5px;font-weight:600;margin:10px 0 3px">Minhas notas</label><textarea class="notes" id="dNo" placeholder="Anotações, contatos, documentos a reunir…">${esc(o.notas||'')}</textarea></div>
-   <div style="display:flex;gap:8px;flex-wrap:wrap">${o.link?`<a class="btn primary" href="${esc(o.link)}" target="_blank" rel="noopener">${I('link')} Abrir edital</a>`:''}<button class="btn" id="dEd">Editar dados</button>${s.k==='enc'?'<button class="btn" id="dMv">Mover para encerrados</button>':''}<button class="btn danger" id="dDel">Excluir</button></div>
+   <div style="display:flex;gap:8px;flex-wrap:wrap">${o.link?`<a class="btn primary" href="${esc(o.link)}" target="_blank" rel="noopener">${I('link')} Abrir edital</a>`:''}<button class="btn" id="dEd">Editar dados</button>${s.k==='enc'?'<button class="btn" id="dMv">Mover para encerrados</button>':''}<button class="btn" id="dDisc">${DESC(o)?'↺ Restaurar':'✕ Descartar'}</button><button class="btn danger" id="dDel">Excluir</button></div>
    <p class="muted" style="font-size:12.5px;margin-top:16px">Confira sempre as datas e exigências no edital oficial.</p></div>`;
   document.body.appendChild(layer);
   const close=()=>{ layer.remove(); openId=null; render() };
@@ -548,6 +579,7 @@ function openDrawer(id){
   let nt; layer.querySelector('#dNo').oninput=ev=>{ clearTimeout(nt); nt=setTimeout(()=>{ o.notas=ev.target.value; store.save() },600) };
   layer.querySelector('#dEd').onclick=()=>{ layer.remove(); openForm(o) };
   const mv=layer.querySelector('#dMv'); if(mv) mv.onclick=()=>{ DB.encerrados=DB.encerrados||[]; DB.encerrados.unshift({tipo:TIPO[o.tipo]||o.tipo,instituicao:o.instituicao,area:o.cargo,periodo:(o.abertura?fdl(o.abertura)+' a ':'até ')+fdl(o.prazo),remuneracao:o.remuneracao||'',link:o.link||'',meuStatus:o.status,notas:o.notas||''}); DB.oportunidades=ops().filter(x=>x!==o); store.save(); close(); toast('Movido para Encerrados') };
+  layer.querySelector('#dDisc').onclick=()=>{ layer.remove(); openId=null; discard(o.id) };
   layer.querySelector('#dDel').onclick=()=>{ if(!confirm('Excluir "'+o.instituicao+'"?')) return; DB.oportunidades=ops().filter(x=>x!==o); store.save(); close() };
   document.addEventListener('keydown',function k(ev){ if(ev.key==='Escape'&&document.body.contains(layer)){ close(); document.removeEventListener('keydown',k) } });
 }
