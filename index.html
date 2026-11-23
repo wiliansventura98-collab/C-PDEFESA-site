@@ -254,6 +254,7 @@ const DESC=o=>o.status==='Descartado';
 // ---------- estado ----------
 let DB=null, store=null, view='painel', openId=null;
 let F={q:'',chance:'',status:'',dest:false,mostrar:'abertos'};
+let showAll=false;
 let mapSel=null, fontesTab='monitorar';
 try{ const v=localStorage.getItem('pd-view'); if(v) view=v }catch(e){}
 const ops=()=>DB?.oportunidades||[];
@@ -418,9 +419,10 @@ function vPainel(){
   os.filter(o=>sit(o).k==='enc'&&!['Inscrito','Aprovado','Não aprovado','Descartado'].includes(o.status)).forEach(o=>al.push({c:'info',o,t:'Prazo encerrado',d:'Encerrou em '+fdl(o.prazo)+'. Mova para Encerrados ou atualize o status.'}));
   { const seen={}; for(let i=0;i<al.length;i++){ const a=al[i]; if(!a.o||!a.o.link||!a.d0) continue; const k=a.t+'|'+a.d0+'|'+a.o.link; if(seen[k]){ seen[k].n=(seen[k].n||1)+1; al.splice(i--,1) } else seen[k]=a }
     al.forEach(a=>{ if(a.n>1) a.d=fdl(a.d0)+' · '+a.n+' subáreas do mesmo edital: '+ops().filter(x=>x.link===a.o.link&&(x.prazo===a.d0||x.abertura===a.d0)).map(x=>x.chance).join(', ')+' (chance).' }) }
+  const sev={crit:0,warn:1,ok:2,info:3}; al.sort((a,b)=>sev[a.c]-sev[b.c]);
   if(!def) al.unshift({c:'warn',o:null,t:'Data da defesa não informada',d:'Informe a data para saber quais pós-docs você pode pleitear.'});
   const alertas=`<div class="card sec"><div class="sec-h"><div><h3>Alertas</h3><p>${al.length} ${al.length===1?'aviso':'avisos'} · calculados a partir das datas de cada edital</p></div></div>
-    ${al.length?al.map(a=>`<div class="arow ${a.c}" ${a.o?`data-open="${a.o.id}"`:'id="bDef2"'}><span class="dot"></span><div><b>${esc(a.t)}</b>${a.o?` <span class="muted">· ${esc(a.o.instituicao)}</span>`:''}<div class="d">${esc(a.d)}</div></div></div>`).join(''):'<p class="muted">Nada urgente.</p>'}</div>`;
+    ${al.length?al.map((a,i)=>`<div class="arow ${a.c}" ${i>=8&&!showAll?'hidden':''} ${a.o?`data-open="${a.o.id}"`:'id="bDef2"'}><span class="dot"></span><div><b>${esc(a.t)}</b>${a.o?` <span class="muted">· ${esc(a.o.instituicao)}</span>`:''}<div class="d">${esc(a.d)}</div></div></div>`).join(''):'<p class="muted">Nada urgente.</p>'}${al.length>8?`<button class="btn sm" style="margin-top:10px" id="bAll">${showAll?'Mostrar só os 8 mais urgentes':'Ver todos os '+al.length+' avisos'}</button>`:''}</div>`;
   // pós-doc pós-defesa
   const pds=abertas.filter(isPD).sort((a,b)=>rankCh(a)-rankCh(b)||(b.destaque-a.destaque));
   const pdsec=`<div class="card sec"><div class="sec-h"><div><h3>Pós-doutorados para depois da defesa</h3><p>Vigentes ou em fluxo contínuo, com a situação em relação à data da sua defesa</p></div><button class="btn sm" data-go="pd">Ver todos</button></div>
@@ -432,13 +434,18 @@ function vPainel(){
   // destaques
   const dest=os.filter(o=>o.destaque&&sit(o).k!=='enc');
   const dsec=dest.length?`<div class="sec-h" style="margin-top:6px"><div><h3>Em destaque ★</h3><p>Oportunidades que você marcou com estrela</p></div></div><div class="grid">${dest.map(card).join('')}</div>`:'';
-  setTimeout(()=>{ document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{ view=b.dataset.go; render() }); const b2=$('#bDef2'); if(b2) b2.onclick=openPerfil },0);
+  setTimeout(()=>{ document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{ view=b.dataset.go; render() }); const b2=$('#bDef2'); if(b2) b2.onclick=openPerfil; const ba=$('#bAll'); if(ba) ba.onclick=()=>{ showAll=!showAll; render() } },0);
   return header('Painel',`${abertas.length} oportunidades vigentes em acompanhamento`)+`<div class="hero">${hero}${stats}</div>${melhoresPiores(abertas)}${alertas}${pdsec}${dsec}`;
 }
 // junta subáreas do mesmo edital (mesmo link, mesma data e mesmo aviso)
 function groupEv(arr){ const seen={}; for(let i=arr.length-1;i>=0;i--){ const e=arr[i]; if(!e.o||!e.o.link) continue; const k=e.t+'|'+(e.d||'')+'|'+e.o.link; if(seen[k]){ seen[k].n=(seen[k].n||1)+1; arr.splice(i,1) } else seen[k]=e }
   arr.forEach(e=>{ if(e.n>1&&e.o) e.extra=' e mais '+(e.n-1)+(e.n===2?' subárea':' subáreas')+' do mesmo edital' }); return arr }
 const rankCh=o=>({Alta:0,'Média':1,Baixa:2}[o.chance]??3);
+// valor principal da remuneração (ex.: "R$ 13.753,96" ou "R$ 1.631,76 a R$ 14.950,78")
+function money(t){ t=String(t||'').trim(); if(!t) return {v:'',full:false};
+  const m=t.match(/(?:R\$|US\$|€|£)\s?[\d.,]+(?:\s*(?:a|até|–|-)\s*(?:R\$|US\$|€|£)?\s?[\d.,]+)?(?:\s*(?:\/\s?(?:mês|ano|h)|por hora-aula|por ano|por mês))?/i);
+  if(m) return {v:m[0].replace(/\s+/g,' '),full:m[0].length<t.length-2,money:true};
+  const c=t.split(/[;(]/)[0].trim(); if(/^não (informad|encontrad)/i.test(c)) return {v:'Não informado',full:true,none:true}; return {v:short(c,40),full:c.length<t.length, none:/não informad|valor da tabela|tabela/i.test(c)} }
 function short(s,n=70){ s=String(s||''); return s.length>n?s.slice(0,n-1).trimEnd()+'…':s }
 
 function card(o){
@@ -448,7 +455,7 @@ function card(o){
   return `<article class="cc ${s.k==='enc'?'past':''}" style="--cc:${c}" data-open="${o.id}">
    <div class="cc-top"><div><span class="pill" style="--sc:${c}">Chance ${esc((o.chance||'?').toLowerCase())}</span> <span class="tag">${esc(s.t)}</span>${e?` <span class="elig ${e.k}">${esc(e.t)}</span>`:''}</div><div style="display:flex;gap:2px;flex:none"><button class="star ${o.destaque?'on':''}" data-id="${o.id}" title="Destaque">${o.destaque?'★':'☆'}</button><button class="disc" data-disc="${o.id}" title="${DESC(o)?'Restaurar':'Descartar: não vai dar certo'}">${DESC(o)?'↺':'✕'}</button></div></div>
    <div><h3>${esc(o.instituicao)}</h3><div class="role">${esc(o.cargo)}</div></div>
-   <dl class="kv"><div><dt>Abertura</dt><dd>${fd(o.abertura)}${da!==null&&da>0?`<small>em ${da} dias</small>`:'<small>&nbsp;</small>'}</dd></div><div><dt>Prazo</dt>${prazoCell}</div><div><dt>${isPD(o)?'Bolsa':'Salário'}</dt><dd style="font-size:13.5px">${esc(short(o.remuneracao||'—',28))}</dd></div></dl>
+   <dl class="kv"><div><dt>Abertura</dt><dd>${fd(o.abertura)}${da!==null&&da>0?`<small>em ${da} dias</small>`:'<small>&nbsp;</small>'}</dd></div><div><dt>Prazo</dt>${prazoCell}</div><div><dt>${isPD(o)?'Bolsa':'Salário'}</dt>${(()=>{const m=money(o.remuneracao);return `<dd style="font-size:${m.v.length>16?13:15}px;${m.none?'color:var(--ink3);font-weight:600':''}" title="${esc(o.remuneracao||'')}">${esc(m.v||'—')}${m.full?'<small>detalhes na ficha</small>':''}</dd>`})()}</div></dl>
    ${o.porque?`<p class="why">${esc(o.porque)}</p>`:''}
    <div class="cc-foot"><select class="sel" data-st="${o.id}">${STATUS.map(x=>`<option ${x===(o.status||'A avaliar')?'selected':''}>${x}</option>`).join('')}</select>${o.notas?'<span class="muted">· tem notas</span>':''}${o.link?`<a href="${esc(o.link)}" target="_blank" rel="noopener" style="margin-left:auto;font-size:13px">Edital ↗</a>`:''}</div></article>`;
 }
@@ -465,7 +472,7 @@ function melhoresPiores(abertas){
   const ord=(a,b)=>((a.rank??999)-(b.rank??999))||score(a)-score(b);
   const best=(hasR?l.filter(o=>o.alerta==='melhor').sort(ord):l.filter(o=>o.chance!=='Baixa').sort((a,b)=>score(a)-score(b))).slice(0,5);
   const worst=(hasR?l.filter(o=>o.alerta==='pior').sort(ord):l.filter(o=>!best.includes(o)&&(o.chance==='Baixa'||(isPD(o)&&elig(o).k==='n'))).sort((a,b)=>score(b)-score(a))).slice(0,5);
-  const li=(o,k)=>{ const d=days(o.prazo); return `<li data-open="${o.id}" style="--k:${k}"><div><div class="nx-t">${esc(o.instituicao)} <span class="pill" style="--sc:${CH[o.chance]}">${esc(o.chance||'')}</span></div><div class="nx-s">${esc(short(o.cargo,80))} · ${o.prazo?(d>=0?'fecha em '+d+' dias':'encerrado'):esc(sit(o).t)}</div></div><button class="disc" data-disc="${o.id}" title="Descartar">✕</button></li>` };
+  const li=(o,k)=>{ const d=days(o.prazo); return `<li data-open="${o.id}" style="--k:${k}"><div><div class="nx-t">${esc(o.instituicao)} <span class="pill" style="--sc:${CH[o.chance]}">${esc(o.chance||'')}</span></div><div class="nx-s">${(()=>{const m=money(o.remuneracao);return m.money?'<b style="color:var(--ink)">'+esc(m.v)+'</b> · ':''})()}${esc(short(o.cargo,70))} · ${o.prazo?(d>=0?'fecha em '+d+' dias':'encerrado'):esc(sit(o).t)}</div></div><button class="disc" data-disc="${o.id}" title="Descartar">✕</button></li>` };
   return `<div class="card sec"><div class="sec-h"><div><h3>Melhores e piores do dia</h3><p>${hasR?'Ordem da varredura diária':'Ordem pela chance, pela data da defesa e pelo prazo'} · clique em ✕ para descartar o que não vai dar certo</p></div></div>
    <div class="mp"><div><p class="lbl" style="color:var(--alta);margin-bottom:4px">Vale priorizar</p><ol>${best.map(o=>li(o,'var(--alta)')).join('')||'<p class="muted">Nada por enquanto.</p>'}</ol></div>
    <div><p class="lbl" style="color:var(--baixa);margin-bottom:4px">Provavelmente não vale</p><ol>${worst.map(o=>li(o,'var(--baixa)')).join('')||'<p class="muted">Nada por enquanto.</p>'}</ol></div></div></div>` }
